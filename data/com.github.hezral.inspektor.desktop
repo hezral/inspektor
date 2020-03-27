@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Inspektor
+GenericName=Inspektor
+Comment=An application for viewing additional file information, designed for elementary OS
+Categories=Development;
+Exec=com.github.hezral.inspektor
+Icon=com.github.hezral.inspektor
+Terminal=false
+Type=Application
+X-GNOME-Gettext-Domain=com.github.hezral.inspektor
+Keywords=Python;
