@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-   Copyright 2018 Adi Hezral (hezral@gmail.com)
+   Copyright 2020 Adi Hezral (hezral@gmail.com)
 
    This file is part of inspektor.
 
@@ -21,28 +21,30 @@
 
 import sys
 import gi
+import argparse
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, GLib
-#from constants import inspektorAttributes
 from mainwindow import inspektorWindow
-from services.manager import inspektorManager
+from parser import parser
 
-
-class inspektor(Gtk.Application):
+class inspektorApp(Gtk.Application):
     def __init__(self):
         super().__init__()
 
         self.props.application_id = "com.github.hezral.inspektor" #inspektorAttributes.application_id
-        self.props.flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
-        self.add_main_option("test", ord("t"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Command line test", None)
+        self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
-        self.instance = None
         self.window = None
         
     def do_startup(self):
         Gtk.Application.do_startup(self)
+        # Support quiting app using Super+Q
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", self.on_quit_action)
+        self.add_action (quit_action)
+        self.set_accels_for_action ("app.quit", ["<Ctrl>Q", "Escape"])
 
-    def do_activate(self):
+    def do_activate(self, files):
         # We only allow a single window and raise any existing ones
         if not self.window:
             # Windows are associated with the application 
@@ -50,30 +52,26 @@ class inspektor(Gtk.Application):
             self.window = inspektorWindow(application=self)
         self.window.present()
         self.add_window(self.window)
-        #self.window.connect('key-press-event', self.window.check)
-        manager = inspektorManager(debugflag=False)
-        manager.clipboard.connect('owner-change', manager.clipboard_changed)
 
-    def do_command_line(self, command_line):
-        options = command_line.get_options_dict()
-        # convert GVariantDict -> GVariant -> dict
-        options = options.end().unpack()
+        file = files[0].get_path()
+        parser(file)
+        
 
-        if "test" in options:
-            # This is printed on the main instance
-            print("Test argument recieved: %s" % options["test"])
+    def do_open(self, files, *hint):
+        if files is not None:
+            self.files = files
+            self.do_activate(files)
+            return 0
+        else:
+            print('No file selected')
+            #self.do_activate(files=None)
+            return 0
+    
+    def on_quit_action(self, action, param):
+        if self.window is not None:
+            self.window.destroy()
 
-        self.activate()
-        return 0
-
-    def close_window(self):
-        pass
-
-    def get_default(self):
-        if not self.instance:
-            self.instance = inspektor()
-            return self.instance
 
 if __name__ == "__main__":
-    app = inspektor()
+    app = inspektorApp()
     app.run(sys.argv)

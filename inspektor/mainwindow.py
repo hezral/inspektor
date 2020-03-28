@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-   Copyright 2018 Adi Hezral (hezral@gmail.com)
+   Copyright 2020 Adi Hezral (hezral@gmail.com)
 
    This file is part of inspektor.
 
@@ -22,11 +22,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from widgets.headerbar import inspektorHeaderBar
-from widgets.listboxrow import inspektorListRow
-from widgets.infoview import inspektorInfoView
-from widgets.listbox import inspektorListBox
-from widgets.inspektorview import inspektorView
 
 
 class inspektorWindow(Gtk.ApplicationWindow):
@@ -34,63 +29,65 @@ class inspektorWindow(Gtk.ApplicationWindow):
         super().__init__(*args, **kwargs)
         
         #applicationwindow construct
-        self.props.title = "inspektor"
-        self.props.resizable = False
-        self.props.border_width = 0
+        self.props.title = "Inspektor"
         self.set_icon_name("com.github.hezral.inspektor")
+
+        self.set_default_size(240, -1)
+        self.props.resizable = False
+
+        self.props.border_width = 0
+        self.props.deletable = False
         self.get_style_context().add_class("rounded")
-        self.set_default_size(360, 480)
+        
         self.set_keep_above(True)
-        self.props.window_position = Gtk.WindowPosition.CENTER
-        
-        #applicationwindow theme
-        settings = Gtk.Settings.get_default()
-        settings.set_property("gtk-application-prefer-dark-theme", True)
+        self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
 
-        listbox_view = inspektorListBox()
-        #initial launch add some rows
-        welcome_text = "Welcome to inspektor"
-        welcome_image = Gtk.Image.new_from_icon_name("system-os-installer", Gtk.IconSize.MENU)
-        welcome_image.set_pixel_size(96)
-        listbox_view.add(inspektorListRow(welcome_image))
-        listbox_view.add(inspektorListRow(welcome_text))
-        listbox_view.add(inspektorListRow(welcome_image))
-        
-        # inspektor_view
-        self.inspektor_view = inspektorView(listbox_view)
+        #print(self.get_toplevel())
 
-        #welcome_view
-        info_view = inspektorInfoView("No inspektor Found","Start Copying Stuffs", "system-os-installer")
-        
-        #search_view
-        #settings_view
+        info_label = Gtk.Label("Info")
+        extended_label = Gtk.Label("Metadata:")
+        extended_label.set_halign (Gtk.Align.START)
 
-        #stack_view
-        stack_view = Gtk.Stack()
-        stack_view.add_named(self.inspektor_view, "inspektor_view")
-        stack_view.add_named(info_view, "info_view")
-        stack_view.set_visible_child_name("inspektor_view")
+        header_label = Gtk.Box()
+        header_label.props.margin_bottom = 10
+        header_label.add(info_label)
 
-        def toggle_stack(self):
-            if stack_view.get_visible_child_name() == 'inspektor_view':
-                stack_view.set_visible_child_full("info_view",Gtk.StackTransitionType.CROSSFADE)
-            else:
-                stack_view.set_visible_child_full("inspektor_view",Gtk.StackTransitionType.CROSSFADE)
+        basic_grid = Gtk.Grid()
+        basic_grid.props.column_spacing = 6
+        basic_grid.props.row_spacing = 6
+        basic_grid.attach(header_label, 0, 0, 2, 1)
+        basic_grid.attach(extended_label, 0, 1, 1, 1)
 
-        #headerbar construct
-        header_bar = inspektorHeaderBar()        
-        header_bar.settings_icon.connect('clicked',toggle_stack)
+        extended_grid = Gtk.Grid()
+        extended_grid.props.column_spacing = 6
+        extended_grid.props.row_spacing = 6
+        #extended_grid.attach(extended_label, 0, 0, 2, 1)
 
-        self.set_titlebar(header_bar)
+        stack = Gtk.Stack()
+        stack.add_titled(basic_grid, 'Basic', 'Basic')
+        stack.add_titled(extended_grid, 'Extended', 'Extended')
 
-        self.add(stack_view)
-        self.show()
+        stack_switcher = Gtk.StackSwitcher()
+        stack_switcher.props.homogeneous = True
+        stack_switcher.props.margin = 12
+        stack_switcher.props.no_show_all = True
+        stack_switcher.props.stack = stack
+        stack_switcher.show()
+
+        layout = Gtk.Grid ()
+        layout.props.margin = 12
+        layout.props.margin_top = 0
+        layout.props.column_spacing = 12
+        layout.props.row_spacing = 6
+        layout.attach(stack_switcher, 0, 1, 2, 1)
+        layout.attach(stack, 0, 2, 2, 1)
+
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        box.props.expand = True
+        box.pack_start(layout, True, True, 1)
+        box.set_halign(Gtk.Align.CENTER)
+        self.add(box)   
         self.show_all()
 
-        # hide toolbar buttons on all rows by iterating through all the child objects in listbox
-        listbox_view.foreach(lambda child, data: child.hide_buttons(), None)
-        #print(len(listbox_view))
 
-    def check(self, widget, event):
-        print(type(self.inspektor_view))
 
