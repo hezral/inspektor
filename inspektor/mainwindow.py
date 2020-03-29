@@ -36,7 +36,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.props.resizable = False
 
         self.props.border_width = 0
-        self.props.deletable = False
+        #self.props.deletable = False
         self.get_style_context().add_class("rounded")
         
         self.set_keep_above(True)
@@ -88,6 +88,22 @@ class inspektorWindow(Gtk.ApplicationWindow):
         box.set_halign(Gtk.Align.CENTER)
         self.add(box)   
         self.show_all()
+    
+    def filechooser(self):
+        filechooserdialog = Gtk.FileChooserDialog()
+        filechooserdialog.set_title("Choose a file")
+        filechooserdialog.add_button("_Open", Gtk.ResponseType.OK)
+        filechooserdialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        filechooserdialog.set_default_response(Gtk.ResponseType.OK)
+        filechooserdialog.set_transient_for(self)
+        filechooserdialog.set_destroy_with_parent(True)
+        filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
+        
+        response = filechooserdialog.run()
+        if response == Gtk.ResponseType.OK:
+            file = filechooserdialog.get_filename()
+        filechooserdialog.destroy()
 
+        return file
 
 

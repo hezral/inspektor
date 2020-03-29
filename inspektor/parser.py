@@ -61,7 +61,6 @@ class parser(object):
             base_filechangedate,\
             base_filepermissions \
         )
-        #print(basicdata)
         return basedata
 
     def get_extendeddata_file(self, json):
@@ -75,6 +74,9 @@ class parser(object):
         )
         return extendeddata_file
 
+    def get_extendeddata_image(self, json):
+        pass
+
     def get_extendeddata_office(self, json):
         pass
 
@@ -84,8 +86,7 @@ class parser(object):
     def get_extendeddata_audio(self, json):
         pass
 
-    def get_extendeddata_image(self, json):
-        pass
+
 
 
 

@@ -35,6 +35,7 @@ class inspektorApp(Gtk.Application):
         self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
         self.window = None
+        self.file = None
         
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -44,7 +45,7 @@ class inspektorApp(Gtk.Application):
         self.add_action (quit_action)
         self.set_accels_for_action ("app.quit", ["<Ctrl>Q", "Escape"])
 
-    def do_activate(self, files):
+    def do_activate(self):
         # We only allow a single window and raise any existing ones
         if not self.window:
             # Windows are associated with the application 
@@ -53,20 +54,19 @@ class inspektorApp(Gtk.Application):
         self.window.present()
         self.add_window(self.window)
 
-        file = files[0].get_path()
-        parser(file)
+        if not self.file:
+            self.file = self.window.filechooser()
+        else:
+            self.file = self.file[0].get_path()
+
+        parser(self.file)
         
 
     def do_open(self, files, *hint):
-        if files is not None:
-            self.files = files
-            self.do_activate(files)
-            return 0
-        else:
-            print('No file selected')
-            #self.do_activate(files=None)
-            return 0
-    
+        self.file = files
+        self.do_activate()
+        return 0
+
     def on_quit_action(self, action, param):
         if self.window is not None:
             self.window.destroy()
