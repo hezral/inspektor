@@ -36,14 +36,15 @@ class inspektorApp(Gtk.Application):
 
         self.window = None
         self.file = None
-        
+
     def do_startup(self):
         Gtk.Application.do_startup(self)
+        
         # Support quiting app using Super+Q
         quit_action = Gio.SimpleAction.new("quit", None)
         quit_action.connect("activate", self.on_quit_action)
-        self.add_action (quit_action)
-        self.set_accels_for_action ("app.quit", ["<Ctrl>Q", "Escape"])
+        self.add_action(quit_action)
+        self.set_accels_for_action("app.quit", ["<Ctrl>Q", "Escape"])
 
     def do_activate(self):
         # We only allow a single window and raise any existing ones
@@ -51,15 +52,31 @@ class inspektorApp(Gtk.Application):
             # Windows are associated with the application 
             # when the last one is closed the application shuts down
             self.window = inspektorWindow(application=self)
-        self.window.present()
-        self.add_window(self.window)
+            self.add_window(self.window)
+            self.window.show_all()
 
         if not self.file:
             self.file = self.window.filechooser()
         else:
             self.file = self.file[0].get_path()
 
-        parser(self.file)
+        if self.file:
+            self.window.get_fileicon(self.file)
+            jsondata = parser().get_jsondata(self.file)
+
+            print(type(jsondata))
+
+            for key in jsondata:
+                if key not in parser().basedata:
+                    #exec("%s = '%s'" % (key, jsondata[key]))
+                    #print(locals()[key])
+                    #print(newvar, key, jsondata[key])
+                    pass
+            
+        
+        else:
+            self.quit()
+
         
 
     def do_open(self, files, *hint):

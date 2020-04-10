@@ -21,7 +21,7 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 
 
 class inspektorWindow(Gtk.ApplicationWindow):
@@ -32,7 +32,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.props.title = "Inspektor"
         self.set_icon_name("com.github.hezral.inspektor")
 
-        self.set_default_size(240, -1)
+        self.set_default_size(300, -1)
         self.props.resizable = False
 
         self.props.border_width = 0
@@ -42,30 +42,36 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.set_keep_above(True)
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
 
-        #print(self.get_toplevel())
+        self.filename = Gtk.Label("ExtraVeryLongFileNameHere.ext")
+        self.filename.set_halign(Gtk.Align.START)
 
-        info_label = Gtk.Label("Info")
-        extended_label = Gtk.Label("Metadata:")
-        extended_label.set_halign (Gtk.Align.START)
+        self.fileicon = Gtk.Image.new_from_icon_name("image-x-generic", Gtk.IconSize.DIALOG)
+        # self.fileicon.props.margin_top = 0
+        # self.fileicon.props.margin_right = 0
+        # self.fileicon.props.margin_left = 0
+        self.fileicon.set_halign = Gtk.Align.START
 
-        header_label = Gtk.Box()
-        header_label.props.margin_bottom = 10
-        header_label.add(info_label)
+        self.header_label_grid = Gtk.Grid()
+        self.header_label_grid.props.column_spacing = 12
+        self.header_label_grid.props.row_spacing = 6
+        self.header_label_grid.set_halign(Gtk.Align.CENTER)
+        self.header_label_grid.attach(self.fileicon, 0, 1, 1, 1)
+        self.header_label_grid.attach_next_to(self.filename, self.fileicon, Gtk.PositionType.RIGHT, 1, 1)
 
-        basic_grid = Gtk.Grid()
-        basic_grid.props.column_spacing = 6
-        basic_grid.props.row_spacing = 6
-        basic_grid.attach(header_label, 0, 0, 2, 1)
-        basic_grid.attach(extended_label, 0, 1, 1, 1)
+        self.basic_grid = Gtk.Grid()
+        self.basic_grid.props.column_spacing = 6
+        self.basic_grid.props.row_spacing = 6
+        #self.basic_grid.attach(header_label, 0, 0, 2, 1)
+        #self.basic_grid.attach(Gtk.Label("Testingthis"), 0, 1, 1, 1)
 
-        extended_grid = Gtk.Grid()
-        extended_grid.props.column_spacing = 6
-        extended_grid.props.row_spacing = 6
-        #extended_grid.attach(extended_label, 0, 0, 2, 1)
+        self.extended_grid = Gtk.Grid()
+        self.extended_grid.props.column_spacing = 6
+        self.extended_grid.props.row_spacing = 6
+        #self.extended_grid.attach(extended_label, 0, 0, 2, 1)
 
         stack = Gtk.Stack()
-        stack.add_titled(basic_grid, 'Basic', 'Basic')
-        stack.add_titled(extended_grid, 'Extended', 'Extended')
+        stack.add_titled(self.basic_grid, 'Basic', 'Basic')
+        stack.add_titled(self.extended_grid, 'Extended', 'Extended')
 
         stack_switcher = Gtk.StackSwitcher()
         stack_switcher.props.homogeneous = True
@@ -75,19 +81,21 @@ class inspektorWindow(Gtk.ApplicationWindow):
         stack_switcher.show()
 
         layout = Gtk.Grid ()
-        layout.props.margin = 12
-        layout.props.margin_top = 0
-        layout.props.column_spacing = 12
+        layout.props.margin = 0
+        layout.props.margin_top = 12
+        layout.props.column_spacing = 0
         layout.props.row_spacing = 6
-        layout.attach(stack_switcher, 0, 1, 2, 1)
-        layout.attach(stack, 0, 2, 2, 1)
+        layout.attach(self.header_label_grid, 0, 1, 1, 1)
+        # layout.attach(self.fileicon, 0, 1, 1, 1)
+        # layout.attach_next_to(self.filename, self.fileicon, Gtk.PositionType.RIGHT, 1, 1)
+        layout.attach(stack_switcher, 0, 2, 2, 1)
+        layout.attach(stack, 0, 3, 2, 1)
+        layout.set_halign(Gtk.Align.CENTER)
+        layout.props.expand = True
 
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        box.props.expand = True
-        box.pack_start(layout, True, True, 1)
-        box.set_halign(Gtk.Align.CENTER)
-        self.add(box)   
-        self.show_all()
+        
+        self.add(layout)   
+        #self.show_all()
     
     def filechooser(self):
         filechooserdialog = Gtk.FileChooserDialog()
@@ -100,10 +108,31 @@ class inspektorWindow(Gtk.ApplicationWindow):
         filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
         
         response = filechooserdialog.run()
+        file = None
         if response == Gtk.ResponseType.OK:
             file = filechooserdialog.get_filename()
-        filechooserdialog.destroy()
+            filechooserdialog.destroy()
+        else:
+            filechooserdialog.destroy()
+            self.destroy()
+        if file is not None:
+            return file
 
-        return file
+    def get_fileicon(self, file):
+        size = 32
+        filedata = Gio.File.new_for_path(file)
+        info = filedata.query_info('standard::icon' , 0 , Gio.Cancellable())
+        fileicon = None
+        for icon_name in info.get_icon().get_names():
+            if fileicon is None:
+                try:
+                    fileicon = Gtk.IconTheme.get_default().load_icon(icon_name, size, 0)
+                except:
+                    pass
+        #print(fileicon)
+        return fileicon
+
+    def update_info_grid(self, data):
+        pass
 
 

@@ -24,66 +24,76 @@ import subprocess
 import shutil
 
 class parser(object):
-    def __init__(self, file):
+    def __init__(self):
         super().__init__()
 
         self.executable = "exiftool"
-        if shutil.which(self.executable):
-            jsondata = self.get_json(file)
 
-        self.get_basedata(jsondata)
+        self.basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
 
-    def get_json(self, file):
-        run_executable = subprocess.Popen(['exiftool', '-j', file], stdout=subprocess.PIPE)
+        try:
+            shutil.which(self.executable)
+        except shutil.Error as error:
+            print('Shutil: ', error)
+
+    def get_jsondata(self, file):
+        run_executable = subprocess.Popen([self.executable, '-j', file], stdout=subprocess.PIPE)
         stdout, stderr = run_executable.communicate()
-
-        for data in json.loads(stdout):
-            for key in data:
-                print(key, ':', data[key])
-
+        
         jsondata = json.loads(stdout)[0]
+        
         return jsondata
 
-    def get_basedata(self, json):
-        base_filename = json['FileName']
-        base_directory = json['Directory']
-        base_filesize = json['FileSize']
-        base_filemodifydate = json['FileModifyDate']
-        base_fileaccessdate = json['FileAccessDate']
-        base_filechangedate = json['FileInodeChangeDate']
-        base_filepermissions = json['FilePermissions']
+        
+    def get_basedata(self, jsondata):
+        base_filename = jsondata['FileName']
+        base_directory = jsondata['Directory']
+        base_filesize = jsondata['FileSize']
+        base_filemodifydate = jsondata['FileModifyDate']
+        base_fileaccessdate = jsondata['FileAccessDate']
+        base_filechangedate = jsondata['FileInodeChangeDate']
+        base_filepermissions = jsondata['FilePermissions']
+        base_filetype = jsondata['FileType']
+        base_fileextension = jsondata['FileTypeExtension']
+        base_filemimetype = jsondata['MIMEType']
         basedata = ( \
             base_filename, \
+            base_filetype, \
+            base_fileextension, \
+            base_filemimetype, \
             base_directory, \
             base_filesize, \
             base_filemodifydate,\
             base_fileaccessdate,\
             base_filechangedate,\
-            base_filepermissions \
+            base_filepermissions 
         )
         return basedata
 
-    def get_extendeddata_file(self, json):
-        ext_filetype = json['FileType']
-        ext_fileextension = json['FileTypeExtension']
-        ext_filemimetype = json['MIMEType']
-        extendeddata_file = ( \
-            ext_filetype, \
-            ext_fileextension, \
-            ext_filemimetype \
-        )
-        return extendeddata_file
-
-    def get_extendeddata_image(self, json):
+    def get_extendeddata_photo(self, jsondata):
+        extended_photo = jsondata['Height']
         pass
 
-    def get_extendeddata_office(self, json):
+    def get_extendeddata_image(self, jsondata):
         pass
 
-    def get_extendeddata_video(self, json):
+    def get_extendeddata_office(self, jsondata):
+        pass
+
+    def get_extendeddata_video(self, jsondata):
+        # extended_video
+        # Duration
+        # ImageWidth
+        # ImageHeight
+        # VideoFrameRate
+        # AudioChannels
+        # AudioBitsPerSample
+        # AudioSampleRate
+        # ImageSize
+        # Megapixels
         pass
     
-    def get_extendeddata_audio(self, json):
+    def get_extendeddata_audio(self, jsondata):
         pass
 
 
