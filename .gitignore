@@ -34,7 +34,7 @@ venv.bak/
 *.mp4
 *.mkv
 *.mp3
-file.avi
-images (4).jpeg
-IMG_5733.heic
-IMG_5733.mov
+*.avi
+*.jpeg
+*.heic
+*.mov
