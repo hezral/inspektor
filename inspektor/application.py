@@ -56,24 +56,31 @@ class inspektorApp(Gtk.Application):
             self.window.show_all()
 
         if not self.file:
-            self.file = self.window.filechooser()
+            self.file = self.window.filechooser() #GLocalFile object
         else:
-            self.file = self.file[0].get_path()
+            self.file = self.file[0] #GLocalFile object
 
         if self.file:
-            self.window.get_fileicon(self.file)
-            jsondata = parser().get_jsondata(self.file)
+            self.file_path = self.file.get_path()
+            self.file_parent = self.file.get_parent().get_path()
+            
+            print(self.file_parent)
+            
+            jsondata = parser().get_jsondata(self.file_path)
+            ermission = parser().get_permission(self.file_path)
+            
+
+            print(filepermission)
+
+            self.window.update_basic_grid(self.file, jsondata)
 
             print(type(jsondata))
 
             for key in jsondata:
                 if key not in parser().basedata:
-                    #exec("%s = '%s'" % (key, jsondata[key]))
-                    #print(locals()[key])
-                    #print(newvar, key, jsondata[key])
+                    print(key, jsondata[key])
                     pass
             
-        
         else:
             self.quit()
 

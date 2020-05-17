@@ -22,6 +22,8 @@
 import json
 import subprocess
 import shutil
+import os
+import stat
 
 class parser(object):
     def __init__(self):
@@ -39,65 +41,11 @@ class parser(object):
     def get_jsondata(self, file):
         run_executable = subprocess.Popen([self.executable, '-j', file], stdout=subprocess.PIPE)
         stdout, stderr = run_executable.communicate()
-        
         jsondata = json.loads(stdout)[0]
-        
         return jsondata
 
-        
-    def get_basedata(self, jsondata):
-        base_filename = jsondata['FileName']
-        base_directory = jsondata['Directory']
-        base_filesize = jsondata['FileSize']
-        base_filemodifydate = jsondata['FileModifyDate']
-        base_fileaccessdate = jsondata['FileAccessDate']
-        base_filechangedate = jsondata['FileInodeChangeDate']
-        base_filepermissions = jsondata['FilePermissions']
-        base_filetype = jsondata['FileType']
-        base_fileextension = jsondata['FileTypeExtension']
-        base_filemimetype = jsondata['MIMEType']
-        basedata = ( \
-            base_filename, \
-            base_filetype, \
-            base_fileextension, \
-            base_filemimetype, \
-            base_directory, \
-            base_filesize, \
-            base_filemodifydate,\
-            base_fileaccessdate,\
-            base_filechangedate,\
-            base_filepermissions 
-        )
-        return basedata
-
-    def get_extendeddata_photo(self, jsondata):
-        extended_photo = jsondata['Height']
-        pass
-
-    def get_extendeddata_image(self, jsondata):
-        pass
-
-    def get_extendeddata_office(self, jsondata):
-        pass
-
-    def get_extendeddata_video(self, jsondata):
-        # extended_video
-        # Duration
-        # ImageWidth
-        # ImageHeight
-        # VideoFrameRate
-        # AudioChannels
-        # AudioBitsPerSample
-        # AudioSampleRate
-        # ImageSize
-        # Megapixels
-        pass
-    
-    def get_extendeddata_audio(self, jsondata):
-        pass
-
-
-
-
-
-
+    def get_permission(self, file):
+        stmode = os.lstat(file).st_mode
+        permissions = stat.filemode(stmode)
+        mode = oct(stat.S_IMODE(stmode))
+        return permissions
