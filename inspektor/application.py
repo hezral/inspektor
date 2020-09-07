@@ -22,20 +22,32 @@
 import sys
 import gi
 import argparse
+import shutil
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, GLib
-from mainwindow import inspektorWindow
+from window import inspektorWindow
 from parser import parser
+from constants import app
 
 class inspektorApp(Gtk.Application):
     def __init__(self):
         super().__init__()
 
-        self.props.application_id = "com.github.hezral.inspektor" #inspektorAttributes.application_id
+        self.props.application_id = app.application_id
         self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
         self.window = None
         self.file = None
+
+        #check if exiftool is installed
+        try:
+            self.exiftool = shutil.which("exiftool")
+            print("Found exiftool installed at", self.exiftool)
+        except shutil.Error as error:
+            print("Shutil: ", error)
+        
+        self.parser_instance = parser(self.exiftool)
+        
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -46,16 +58,16 @@ class inspektorApp(Gtk.Application):
         self.add_action(quit_action)
         self.set_accels_for_action("app.quit", ["<Ctrl>Q", "Escape"])
 
+
     def do_activate(self):
         # We only allow a single window and raise any existing ones
-        if not self.window:
+        if self.window is None:
             # Windows are associated with the application 
             # when the last one is closed the application shuts down
             self.window = inspektorWindow(application=self)
             self.add_window(self.window)
-            self.window.show_all()
 
-        if not self.file:
+        if self.file is None:
             self.file = self.window.filechooser() #GLocalFile object
         else:
             self.file = self.file[0] #GLocalFile object
@@ -66,21 +78,26 @@ class inspektorApp(Gtk.Application):
             
             print(self.file_parent)
             
-            jsondata = parser().get_jsondata(self.file_path)
-            ermission = parser().get_permission(self.file_path)
+            jsondata = self.parser_instance.get_jsondata(self.file_path)
+
+            #filepermission = parser(self.exiftool_exe).get_permission(self.file_path)
+            #print(filepermission)
+
+            self.window.update_data_grid(self.file, jsondata)
             
+            #print(type(jsondata))
 
-            print(filepermission)
-
-            self.window.update_basic_grid(self.file, jsondata)
-
-            print(type(jsondata))
-
-            for key in jsondata:
-                if key not in parser().basedata:
-                    print(key, jsondata[key])
-                    pass
+            # for key in jsondata:
+            #     if key not in self.parser_instance.basedata:
+            #         print("Extended: ",key, jsondata[key])
+            #         pass
             
+            # for key in jsondata:
+            #     if key in self.parser_instance.basedata:
+            #         print("Basic: ", key, jsondata[key])
+            #         pass
+            self.window.show_all()
+
         else:
             self.quit()
 

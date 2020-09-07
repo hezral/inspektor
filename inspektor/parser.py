@@ -26,20 +26,14 @@ import os
 import stat
 
 class parser(object):
-    def __init__(self):
+    def __init__(self, exif_path):
         super().__init__()
 
-        self.executable = "exiftool"
-
+        self.exiftool = exif_path
         self.basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
 
-        try:
-            shutil.which(self.executable)
-        except shutil.Error as error:
-            print('Shutil: ', error)
-
     def get_jsondata(self, file):
-        run_executable = subprocess.Popen([self.executable, '-j', file], stdout=subprocess.PIPE)
+        run_executable = subprocess.Popen([self.exiftool, '-j', file], stdout=subprocess.PIPE)
         stdout, stderr = run_executable.communicate()
         jsondata = json.loads(stdout)[0]
         return jsondata

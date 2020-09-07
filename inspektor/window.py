@@ -19,14 +19,18 @@
     along with inspektor.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Pango
+from constants import data
 
 
 class inspektorWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.basedata = data().basedata
         
         # applicationwindow construct
         self.props.title = "Inspektor"
@@ -37,7 +41,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
         self.props.border_width = 0
         self.get_style_context().add_class("rounded")
-        self.set_default_size(320, -1)
+        self.set_default_size(400, -1)
 
 
         # header label filename construct
@@ -49,13 +53,12 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.filename.props.ellipsize = Pango.EllipsizeMode.MIDDLE
         self.filename.props.selectable = True
         
-        
         # header label fileicon construct
         self.fileicon = Gtk.Image.new_from_icon_name("unknown", Gtk.IconSize.DIALOG)
         self.fileicon.props.halign = Gtk.Align.START
         self.fileicon.set_valign(Gtk.Align.CENTER)
 
-        # header label construct
+        # header label grid construct
         header_label_grid = Gtk.Grid()
         header_label_grid.props.margin_top = 12
         header_label_grid.props.margin_left = 24
@@ -64,65 +67,37 @@ class inspektorWindow(Gtk.ApplicationWindow):
         header_label_grid.attach(self.fileicon, 0, 1, 1, 1)
         header_label_grid.attach_next_to(self.filename, self.fileicon, Gtk.PositionType.RIGHT, 1, 1)
 
+        # actions grid construct
+        action_grid = Gtk.Grid()
+        action_grid.props.margin_top = 12
+        action_grid.props.margin_left = 24
+        action_grid.props.margin_right = 24
+        action_grid.props.column_spacing = 12
 
-        # basic info construct
-        basic_directory = titleLabel('Directory')
-        basic_filesize = titleLabel('Size')
-        basic_filemodifydate = titleLabel('Modify Date')
-        basic_fileaccessdate = titleLabel('Access Date')
-        basic_filechangedate = titleLabel('Change Date')
-        basic_filepermissions = titleLabel('Permissions')
-        basic_filetype = titleLabel('Type')
-        basic_fileextension = titleLabel('Type Extension')
-        basic_filemimetype = titleLabel('MIME Type')
-
-        self.basic_directory_value = valueLabel()
-        self.basic_filesize_value = valueLabel()
-        self.basic_filemodifydate_value = valueLabel()
-        self.basic_fileaccessdate_value = valueLabel()
-        self.basic_filechangedate_value = valueLabel()
-        self.basic_filepermissions_value = valueLabel()
-        self.basic_filetype_value = valueLabel()
-        self.basic_fileextension_value = valueLabel()
-        self.basic_filemimetype_value = valueLabel()
-
-
-        basic_grid = Gtk.Grid()
-        basic_grid.props.halign = Gtk.Align.FILL
-        basic_grid.props.valign = Gtk.Align.FILL
-        basic_grid.props.expand = True
-        basic_grid.props.margin = 24
-        basic_grid.props.margin_top = 18
-        basic_grid.props.column_spacing = 6
-        basic_grid.props.row_spacing = 6
-        basic_grid.attach(basic_directory, 0, 1, 1, 1)
-        basic_grid.attach_next_to(self.basic_directory_value, basic_directory, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filesize, 0, 2, 1, 1)
-        basic_grid.attach_next_to(self.basic_filesize_value, basic_filesize, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filemodifydate, 0, 3, 1, 1)
-        basic_grid.attach_next_to(self.basic_filemodifydate_value, basic_filemodifydate, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_fileaccessdate, 0, 4, 1, 1)
-        basic_grid.attach_next_to(self.basic_fileaccessdate_value, basic_fileaccessdate, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filechangedate, 0, 5, 1, 1)
-        basic_grid.attach_next_to(self.basic_filechangedate_value, basic_filechangedate, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filepermissions, 0, 6, 1, 1)
-        basic_grid.attach_next_to(self.basic_filepermissions_value, basic_filepermissions, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filetype, 0, 7, 1, 1)
-        basic_grid.attach_next_to(self.basic_filetype_value, basic_filetype, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_fileextension, 0, 8, 1, 1)
-        basic_grid.attach_next_to(self.basic_fileextension_value, basic_fileextension, Gtk.PositionType.RIGHT, 1, 1)
-        basic_grid.attach(basic_filemimetype, 0, 9, 1, 1)
-        basic_grid.attach_next_to(self.basic_filemimetype_value, basic_filemimetype, Gtk.PositionType.RIGHT, 1, 1)
+        # base info construct
+        self.base_grid = Gtk.Grid()
+        self.base_grid.props.halign = Gtk.Align.FILL
+        self.base_grid.props.valign = Gtk.Align.FILL
+        self.base_grid.props.expand = True
+        self.base_grid.props.margin = 24
+        self.base_grid.props.margin_top = 18
+        self.base_grid.props.column_spacing = 6
+        self.base_grid.props.row_spacing = 6
 
         # extended info construct
-        extended_grid = Gtk.Grid()
-        extended_grid.props.column_spacing = 6
-        extended_grid.props.row_spacing = 6
+        self.extended_grid = Gtk.Grid()
+        self.extended_grid.props.halign = Gtk.Align.FILL
+        self.extended_grid.props.valign = Gtk.Align.FILL
+        self.extended_grid.props.expand = True
+        self.extended_grid.props.margin = 24
+        self.extended_grid.props.margin_top = 18
+        self.extended_grid.props.column_spacing = 6
+        self.extended_grid.props.row_spacing = 6
 
         # info stack contstruct
         stack = Gtk.Stack()
-        stack.add_titled(basic_grid, 'basic', 'Basic')
-        stack.add_titled(extended_grid, 'extended', 'Extended')
+        stack.add_titled(self.base_grid, 'base', 'Base')
+        stack.add_titled(self.extended_grid, 'extended', 'Extended')
 
         # info stack switcher contruct
         stack_switcher = Gtk.StackSwitcher()
@@ -147,7 +122,6 @@ class inspektorWindow(Gtk.ApplicationWindow):
     
     def filechooser(self):
         filechooserdialog = Gtk.FileChooserDialog()
-        # filechooserdialog.set_title("Choose a file")
         filechooserdialog.add_button("_Open", Gtk.ResponseType.OK)
         filechooserdialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
         filechooserdialog.set_default_response(Gtk.ResponseType.OK)
@@ -179,52 +153,53 @@ class inspektorWindow(Gtk.ApplicationWindow):
                 except:
                     pass
 
-    def update_basic_grid(self, file, dict):
+    def update_data_grid(self, file, dict):
         # set the file icon
         self.get_fileicon(file.get_path())
         # set file name
         self.filename.set_label(file.get_basename())
         self.filename.set_tooltip_text(self.filename.get_label())
-        # set the directory path
-        self.basic_directory_value.set_label(file.get_parent().get_path())
-        # set the basic info
-        self.basic_filepermissions_value.set_label()
 
-        # self.basic_directory_value = valueLabel()
-        # self.basic_filesize_value = valueLabel()
-        # self.basic_filemodifydate_value = valueLabel()
-        # self.basic_fileaccessdate_value = valueLabel()
-        # self.basic_filechangedate_value = valueLabel()
-        # self.basic_filepermissions_value = valueLabel()
-        # self.basic_filetype_value = valueLabel()
-        # self.basic_fileextension_value = valueLabel()
-        # self.basic_filemimetype_value = valueLabel()
-        pass
-
-    def update_extended_grid(self, dict):
-        pass
-
+        i = 1
+        for key in self.basedata:
+            title = titleLabel(key)
+            value = valueLabel(dict[key])
+            self.base_grid.attach(title, 0, i, 1, 1)
+            self.base_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
+            i = i + 1
+        
+        i = 1
+        for key in dict:
+            if key not in self.basedata:
+                title = titleLabel(key)
+                value = valueLabel(str(dict[key]))
+                self.extended_grid.attach(title, 0, i, 1, 1)
+                self.extended_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
+                i = i + 1
+        
 
 class valueLabel(Gtk.Label):
-    def __init__(self):
+    def __init__(self, title):
         super().__init__()
-
         self.props.halign = Gtk.Align.START
         self.props.valign = Gtk.Align.START
         self.props.selectable = True
-        self.props.max_width_chars = 24
+        self.props.max_width_chars = 30
         self.props.wrap = True
         self.props.wrap_mode = Pango.WrapMode.CHAR
-        self.set_label('unknown')
+        if title is None:
+            self.set_label('unknown')
+        else:
+            self.set_label(title)
 
 
 class titleLabel(Gtk.Label):
     def __init__(self, title):
         super().__init__()
-
         self.props.halign = Gtk.Align.END
         self.props.valign = Gtk.Align.START
         self.props.wrap = True
+        self.props.selectable = True
         self.props.wrap_mode = Pango.WrapMode.WORD_CHAR
         title = title + ': '
         self.set_label(title)
