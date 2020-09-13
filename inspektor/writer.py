@@ -30,7 +30,7 @@ class parser(object):
         super().__init__()
 
         self.exiftool = exif_path
-        # self.basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
+        self.basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
 
     def get_jsondata(self, file):
         run_executable = subprocess.Popen([self.exiftool, '-j', file], stdout=subprocess.PIPE)
@@ -44,10 +44,10 @@ class parser(object):
         mode = oct(stat.S_IMODE(stmode))
         return permissions
 
-    def export_json(self, file):
-        print("JSON")
+    def export_json:
         pass
 
-    def export_csv(self, file):
-        print("CSV")
+    def export_csv:
         pass
+
+    def 

@@ -44,7 +44,7 @@ class app:
     about_license_type = Gtk.License.GPL_3_0
 
 class data:
-    basedata = ('Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
+    basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
 
 
 class colors:

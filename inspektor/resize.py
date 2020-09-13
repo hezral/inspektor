@@ -1,23 +1,38 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+import sys
 
-class ResizeWindow:
+class Main(object):
+    def __init__(self):
+        self.window = None
+        self.width = 500
+        self.height = 500
 
- def __init__(self):
-    self.window = Gtk.Window()
-    button = Gtk.Button("Resize")
-    self.window.add(button)
-    button.connect("clicked", self.resizewin)
-    self.window.set_default_size(Gtk.gdk.screen_width(),500)
-    self.window.move(0, 0)
-    self.window.show_all()
-    self.window.window.property_change("_NET_WM_STRUT", "CARDINAL", 32,
-           Gtk.gdk.PROP_MODE_REPLACE, [0, 0, 100, 0])
+        # create application
+        self.app = Gtk.Application.new("org.example.sztest", 0)
+        self.app.connect('activate', self.on_app_activate)
 
- def resizewin(self, widget, *args):
-    self.window.resize(Gtk.gdk.screen_width(),100)
+    def on_button_pressed(self, btn, event):
+        if self.width > self.height:
+            self.width -= 50
+        else:
+            self.height -= 50
 
-if __name__ == '__main__':
-  ResizeWindow()
-  Gtk.main()
+        self.window.resize(self.width, self.height)
+        return True
+
+    def on_app_activate(self, app):
+        self.window = Gtk.ApplicationWindow.new(self.app)
+        self.window.set_title("Size test")
+        self.window.resize(self.width, self.height)
+        self.window.connect("button-press-event", self.on_button_pressed)
+        self.window.connect("destroy", lambda a: self.app.quit())
+        self.window.show_all()
+
+
+def main():
+    m = Main()
+    m.app.run(sys.argv)
+
+if __name__ == "__main__": main()

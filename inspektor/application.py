@@ -46,7 +46,8 @@ class inspektorApp(Gtk.Application):
         except shutil.Error as error:
             print("Shutil: ", error)
         
-        self.parser_instance = parser(self.exiftool)
+        self.parser = parser(self.exiftool)
+
         
 
     def do_startup(self):
@@ -64,7 +65,7 @@ class inspektorApp(Gtk.Application):
         if self.window is None:
             # Windows are associated with the application 
             # when the last one is closed the application shuts down
-            self.window = inspektorWindow(application=self)
+            self.window = inspektorWindow(self.parser, application=self)
             self.add_window(self.window)
 
         if self.file is None:
@@ -75,29 +76,12 @@ class inspektorApp(Gtk.Application):
         if self.file:
             self.file_path = self.file.get_path()
             self.file_parent = self.file.get_parent().get_path()
-            
-            print(self.file_parent)
-            
-            jsondata = self.parser_instance.get_jsondata(self.file_path)
 
-            #filepermission = parser(self.exiftool_exe).get_permission(self.file_path)
-            #print(filepermission)
+            jsondata = self.parser.get_jsondata(self.file_path)
 
             self.window.update_data_grid(self.file, jsondata)
             
-            #print(type(jsondata))
-
-            # for key in jsondata:
-            #     if key not in self.parser_instance.basedata:
-            #         print("Extended: ",key, jsondata[key])
-            #         pass
-            
-            # for key in jsondata:
-            #     if key in self.parser_instance.basedata:
-            #         print("Basic: ", key, jsondata[key])
-            #         pass
             self.window.show_all()
-
         else:
             self.quit()
 
