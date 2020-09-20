@@ -46,6 +46,8 @@ class app:
 class data:
     basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
 
+class tools:
+    tools = ('exiftool','setfattr','getfattr')
 
 class colors:
     primary_color = None

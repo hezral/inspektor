@@ -24,6 +24,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Pango
 from constants import data
+from parser import parser
 
 
 class inspektorWindow(Gtk.ApplicationWindow):
@@ -32,12 +33,11 @@ class inspektorWindow(Gtk.ApplicationWindow):
 
         self.basedata = data().basedata
         self.parser = parser
-
-        print(type(parser))
+        self.file = None
         
         # applicationwindow construct
         self.props.title = "Inspektor"
-        self.set_icon_name("com.github.hezral.inspektor")
+        #self.set_icon_name("com.github.hezral.inspektor")
         self.props.resizable = False
         # self.props.deletable = False
         # self.set_keep_above(True)
@@ -45,6 +45,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.props.border_width = 0
         self.get_style_context().add_class("rounded")
         self.set_default_size(400, 560)
+        #self.set_icon_name("accessories-camera")
 
 
         # header label filename construct
@@ -54,7 +55,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.filename.props.valign = Gtk.Align.FILL
         self.filename.props.max_width_chars = 40
         self.filename.props.ellipsize = Pango.EllipsizeMode.MIDDLE
-        self.filename.props.selectable = True
+        self.filename.props.selectable = False
         
         # header label fileicon construct
         self.fileicon = Gtk.Image.new_from_icon_name("unknown", Gtk.IconSize.DIALOG)
@@ -70,46 +71,78 @@ class inspektorWindow(Gtk.ApplicationWindow):
         header_label_grid.attach(self.fileicon, 0, 1, 1, 1)
         header_label_grid.attach_next_to(self.filename, self.fileicon, Gtk.PositionType.RIGHT, 1, 1)
 
-        # base info construct
-        self.basic_grid = Gtk.Grid()
-        self.basic_grid.props.halign = Gtk.Align.FILL
-        self.basic_grid.props.valign = Gtk.Align.FILL
-        self.basic_grid.props.expand = True
-        self.basic_grid.props.margin = 29
-        self.basic_grid.props.margin_top = 23
-        self.basic_grid.props.column_spacing = 6
-        self.basic_grid.props.row_spacing = 6
 
-        # extended info construct
-        self.extended_grid = Gtk.Grid()
-        self.extended_grid.props.halign = Gtk.Align.FILL
-        self.extended_grid.props.valign = Gtk.Align.FILL
-        self.extended_grid.props.expand = True
-        self.extended_grid.props.margin = 4
-        #self.extended_grid.props.margin_top = 18
-        self.extended_grid.props.column_spacing = 6
-        self.extended_grid.props.row_spacing = 6
+        # basic data grid construct
+        self.base_data_grid = Gtk.Grid()
+        self.base_data_grid.props.halign = Gtk.Align.FILL
+        self.base_data_grid.props.valign = Gtk.Align.FILL
+        self.base_data_grid.props.expand = False
+        self.base_data_grid.props.column_spacing = 6
+        self.base_data_grid.props.row_spacing = 6
+        self.base_data_grid.props.margin_top = 5
+        self.base_data_grid.props.margin_left = 5
+        self.base_data_grid.props.margin_right = 5
 
-        self.scrolled_view = Gtk.ScrolledWindow()
-        self.scrolled_view.add(self.extended_grid)
-        self.scrolled_view.props.shadow_type = Gtk.ShadowType(3)
-        self.scrolled_view.props.vscrollbar_policy = Gtk.PolicyType(1)
+        # file comments constructor
+        self.file_comments = Gtk.TextBuffer()
+        self.file_comments.set_text("")
+        comments_textview = Gtk.TextView(buffer=self.file_comments)
+        comments_textview.props.margin = 4
 
-        scrolled_grid = Gtk.Grid()
-        scrolled_grid.props.halign = Gtk.Align.FILL
-        scrolled_grid.props.valign = Gtk.Align.FILL
-        scrolled_grid.props.expand = True
-        scrolled_grid.props.margin = 24
-        scrolled_grid.props.margin_top = 18
-        scrolled_grid.props.margin_bottom = 18
-        scrolled_grid.props.column_spacing = 6
-        scrolled_grid.props.row_spacing = 6
-        scrolled_grid.attach(self.scrolled_view, 0, 1, 1, 1)
+        comments_scrolledview = Gtk.ScrolledWindow()
+        comments_scrolledview.add(comments_textview)
+        comments_scrolledview.props.shadow_type = Gtk.ShadowType(3)
+        comments_scrolledview.props.vscrollbar_policy = Gtk.PolicyType(1)
+        comments_scrolledview.props.expand = True
+
+        comments_grid = Gtk.Grid()
+        comments_grid.props.column_spacing = 6
+        comments_grid.props.row_spacing = 6
+        comments_grid.props.expand = True
+        comments_grid_label = Gtk.Label(label="Comments:")
+        comments_grid_label.props.halign = Gtk.Align.START
+        comments_grid_label.props.margin_left = 5
+        comments_grid.attach(comments_grid_label, 0, 1, 1, 1)
+        comments_grid.attach(comments_scrolledview, 0, 2, 1, 1)
+
+        # base grid for stack
+        base_grid = Gtk.Grid()
+        base_grid.props.expand = True
+        base_grid.props.margin = 24
+        base_grid.props.column_spacing = 6
+        base_grid.props.row_spacing = 12
+        base_grid.attach(self.base_data_grid, 0, 1, 1, 1)
+        base_grid.attach(Gtk.HSeparator(), 0, 2, 1, 1)
+        base_grid.attach(comments_grid, 0, 3, 1, 1)
+
+
+
+        # extended data grid construct
+        self.extended_data_grid = Gtk.Grid()
+        self.extended_data_grid.props.halign = Gtk.Align.FILL
+        self.extended_data_grid.props.valign = Gtk.Align.FILL
+        self.extended_data_grid.props.expand = True
+        self.extended_data_grid.props.margin = 4
+        self.extended_data_grid.props.column_spacing = 6
+        self.extended_data_grid.props.row_spacing = 6
+
+        extended_scrolledview = Gtk.ScrolledWindow()
+        extended_scrolledview.add(self.extended_data_grid)
+        extended_scrolledview.props.shadow_type = Gtk.ShadowType(3)
+        extended_scrolledview.props.vscrollbar_policy = Gtk.PolicyType(1)
+
+        # base grid for stack
+        extended_grid = Gtk.Grid()
+        extended_grid.props.expand = True
+        extended_grid.props.margin = 24
+        extended_grid.props.column_spacing = 6
+        extended_grid.props.row_spacing = 6
+        extended_grid.attach(extended_scrolledview, 0, 1, 1, 1)
 
         # info stack contstruct
         stack = Gtk.Stack()
-        stack.add_titled(self.basic_grid, 'basic', 'Basic')
-        stack.add_titled(scrolled_grid, 'extended', 'Extended')
+        stack.add_titled(base_grid, 'base', 'Base')
+        stack.add_titled(extended_grid, 'extended', 'Extended')
 
         # info stack switcher contruct
         stack_switcher = Gtk.StackSwitcher()
@@ -130,12 +163,14 @@ class inspektorWindow(Gtk.ApplicationWindow):
         action_grid.props.margin_right = 24
         action_grid.props.column_spacing = 12
         export_json_button = Gtk.Button.new_from_icon_name("open-menu", Gtk.IconSize.LARGE_TOOLBAR)
+        export_json_button.get_style_context().add_class('flat')
         export_csv_button = Gtk.Button.new_from_icon_name("open-menu", Gtk.IconSize.LARGE_TOOLBAR)
+
 
         separator = Gtk.Separator()
         separator.set_orientation(Gtk.Orientation.HORIZONTAL)
         status_bar = Gtk.Label()
-        status_bar.props.margin = 8
+        status_bar.props.margin = 10
         status_bar.props.halign = Gtk.Align.END
 
 
@@ -150,26 +185,6 @@ class inspektorWindow(Gtk.ApplicationWindow):
 
         self.add(layout)
 
-    
-    def filechooser(self):
-        filechooserdialog = Gtk.FileChooserDialog()
-        filechooserdialog.add_button("_Open", Gtk.ResponseType.OK)
-        filechooserdialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
-        filechooserdialog.set_default_response(Gtk.ResponseType.OK)
-        filechooserdialog.set_transient_for(self)
-        filechooserdialog.set_destroy_with_parent(True)
-        filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
-        
-        response = filechooserdialog.run()
-        file = None
-        if response == Gtk.ResponseType.OK:
-            file = filechooserdialog.get_file() #return a GLocalFile object
-            filechooserdialog.destroy()
-        else:
-            filechooserdialog.destroy()
-            self.destroy()
-        if file is not None:
-            return file
 
     def get_fileicon(self, file):
         size = 48
@@ -184,42 +199,44 @@ class inspektorWindow(Gtk.ApplicationWindow):
                 except:
                     pass
 
-    def update_data_grid(self, file, dict):
+    def load_metadata(self, file, dict):
+
+        self.file = file
+
         # set the file icon
         self.get_fileicon(file.get_path())
         # set file name
         self.filename.set_label(str(dict['FileName']))
-        # self.filename.set_label(file.get_basename())
         self.filename.set_tooltip_text(self.filename.get_label())
 
         #clear previous data if the app is invoked while an existing window is open. need to figure out how to do multiple instance
-        basic_grid_children = self.basic_grid.get_children()
-        for child in basic_grid_children:
-            self.basic_grid.remove(child)
-        extended_grid_children = self.extended_grid.get_children()
-        for child in extended_grid_children:
-            self.extended_grid.remove(child)
+        base_data_grid_children = self.base_data_grid.get_children()
+        for child in base_data_grid_children:
+            self.base_data_grid.remove(child)
+        extended_data_grid_children = self.extended_data_grid.get_children()
+        for child in extended_data_grid_children:
+            self.extended_data_grid.remove(child)
 
         i = 1
         for key in self.basedata:
-            title = titleLabel(key)
-            value = valueLabel(dict[key])
+            # title = titleLabel(key)
+            # value = valueLabel(dict[key])
             label = dataLabel(key, str(dict[key]))
-            self.basic_grid.attach(label, 0, i, 1, 1)
-            #self.basic_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
+            self.base_data_grid.attach(label, 0, i, 1, 1)
+            #self.base_data_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
             i = i + 1
         
         i = 1
         for key in sorted (dict.keys()):
             if len(dict.keys()) < 15:
-                self.scrolled_view.props.shadow_type = Gtk.ShadowType(0)
+                self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
 
             if key not in self.basedata:
-                title = titleLabel(key)
-                value = valueLabel(str(dict[key]))
+                # title = titleLabel(key)
+                # value = valueLabel(str(dict[key]))
                 label = dataLabel(key, str(dict[key]))
-                self.extended_grid.attach(label, 0, i, 1, 1)
-                #self.extended_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
+                self.extended_data_grid.attach(label, 0, i, 1, 1)
+                #self.extended_data_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
                 i = i + 1
         
         

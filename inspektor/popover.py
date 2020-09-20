@@ -11,21 +11,40 @@ class PopoverWindow(Gtk.Window):
 
         outerbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
         self.add(outerbox)
+        self.set_default_size(250, 300)
 
         button = Gtk.Button(label="Export", image=Gtk.Image.new_from_icon_name("document-export", Gtk.IconSize.LARGE_TOOLBAR))
         button.set_always_show_image(True)
         button.connect("clicked", self.on_click_me_clicked)
+
+        textbuffer = Gtk.TextBuffer()
+        textbuffer.set_text("GTK+, or the GIMP Toolkit, is a multi-platform toolkit for creating graphical user interfaces. Offering a complete set of widgets, GTK+ is suitable for projects ranging from small one-off tools to complete application suites.")
+        
+        textview = Gtk.TextView(buffer=textbuffer)
+        textview.set_vexpand(True)
+        textview.set_hexpand(True)
+        
+        
+        entry = Gtk.Entry()
+        entry.set_size_request(200, 50)
+        
         outerbox.pack_start(button, False, True, 0)
+        #outerbox.pack_end(entry, False, True, 0)
+        outerbox.pack_end(textview, False, False, 0)
 
         export_json_button = Gtk.Button(label="Export to JSON", image=Gtk.Image.new_from_icon_name("text-css", Gtk.IconSize.LARGE_TOOLBAR))
         export_json_button.set_always_show_image(True)
-        # export_json_button.props.halign = Gtk.Align.START
+        export_json_button.props.halign = Gtk.Align.FILL
+        #export_json_button.set_size_request(135, 40)
         export_json_button.connect("clicked",self.on_open_clicked)
 
         export_csv_button = Gtk.Button(label="Export to CSV", image=Gtk.Image.new_from_icon_name("application-vnd.ms-excel", Gtk.IconSize.LARGE_TOOLBAR))
         export_csv_button.set_always_show_image(True)
-        # export_csv_button.props.halign = Gtk.Align.START
+        export_csv_button.props.halign = Gtk.Align.FILL
+        #export_csv_button.set_size_request(135, 40)
         export_csv_button.connect("clicked",self.on_open_clicked)
+
+ 
 
         self.popover = Gtk.Popover()
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)

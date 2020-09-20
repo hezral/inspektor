@@ -36,19 +36,13 @@ class inspektorApp(Gtk.Application):
         self.props.application_id = app.application_id
         self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
+        # set dark theme
+        Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", True)
+
         self.window = None
         self.file = None
+        self.parser = None
 
-        #check if exiftool is installed
-        try:
-            self.exiftool = shutil.which("exiftool")
-            print("Found exiftool installed at", self.exiftool)
-        except shutil.Error as error:
-            print("Shutil: ", error)
-        
-        self.parser = parser(self.exiftool)
-
-        
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -61,6 +55,10 @@ class inspektorApp(Gtk.Application):
 
 
     def do_activate(self):
+        # parser instance
+        if self.parser is None:
+            self.parser = parser()
+
         # We only allow a single window and raise any existing ones
         if self.window is None:
             # Windows are associated with the application 
@@ -69,19 +67,19 @@ class inspektorApp(Gtk.Application):
             self.add_window(self.window)
 
         if self.file is None:
-            self.file = self.window.filechooser() #GLocalFile object
+            self.file = self.filechooser() #GLocalFile object
         else:
             self.file = self.file[0] #GLocalFile object
 
         if self.file:
             self.file_path = self.file.get_path()
-            self.file_parent = self.file.get_parent().get_path()
 
-            jsondata = self.parser.get_jsondata(self.file_path)
+            metadata = self.parser.get_jsondata(self.file_path)
 
-            self.window.update_data_grid(self.file, jsondata)
+            self.window.load_metadata(self.file, metadata)
             
             self.window.show_all()
+
         else:
             self.quit()
 
@@ -95,6 +93,26 @@ class inspektorApp(Gtk.Application):
     def on_quit_action(self, action, param):
         if self.window is not None:
             self.window.destroy()
+
+    def filechooser(self):
+        filechooserdialog = Gtk.FileChooserDialog()
+        filechooserdialog.add_button("_Open", Gtk.ResponseType.OK)
+        filechooserdialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        filechooserdialog.set_default_response(Gtk.ResponseType.OK)
+        filechooserdialog.set_transient_for(self.window)
+        filechooserdialog.set_destroy_with_parent(False)
+        filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
+        
+        response = filechooserdialog.run()
+        file = None
+        if response == Gtk.ResponseType.OK:
+            file = filechooserdialog.get_file() #return a GLocalFile object
+            filechooserdialog.destroy()
+        else:
+            filechooserdialog.destroy()
+            #self.window.destroy()
+        if file is not None:
+            return file
 
 
 if __name__ == "__main__":

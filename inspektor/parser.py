@@ -21,16 +21,34 @@
 
 import json
 import subprocess
-import shutil
+from shutil import which, Error
 import os
 import stat
+from constants import tools
 
 class parser(object):
-    def __init__(self, exif_path):
+    def __init__(self):
         super().__init__()
 
-        self.exiftool = exif_path
-        # self.basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
+        #check if exiftool is installed
+        try:
+            self.exiftool = which("exiftool")
+            #print("Found exiftool installed at", self.exiftool)
+        except Error as error:
+            print("Shutil: ", error)
+
+        try:
+            self.setfattr = which("setfattr")
+            #("Found exiftool installed at", self.setfattr)
+        except Error as error:
+            print("Shutil: ", error)
+
+        try:
+            self.getfattr = which("getfattr")
+            #print("Found exiftool installed at", self.getfattr)
+        except Error as error:
+            print("Shutil: ", error)
+ 
 
     def get_jsondata(self, file):
         run_executable = subprocess.Popen([self.exiftool, '-j', file], stdout=subprocess.PIPE)
@@ -44,10 +62,26 @@ class parser(object):
         mode = oct(stat.S_IMODE(stmode))
         return permissions
 
+    def get_file_comments(self, file):
+        run_executable = subprocess.Popen([self.getfattr, file], stdout=subprocess.PIPE)
+        stdout, stderr = run_executable.communicate()
+        file_comments = stdout
+        return file_comments
+
+    def set_file_comments(self, file):
+        run_executable = subprocess.Popen([self.setfattr, file], stdout=subprocess.PIPE)
+        stdout, stderr = run_executable.communicate()
+        
+        
+
     def export_json(self, file):
-        print("JSON")
-        pass
+        outfile = file + '_metadata.json'
+        with open(outfile,'wb') as out, open('stderr.txt','wb') as err:
+            subprocess.Popen([self.exiftool, '-j', file], stdout=out,stderr=err)
+        print('JSON')
 
     def export_csv(self, file):
-        print("CSV")
-        pass
+        outfile = file + '_metadata.csv'
+        with open(outfile,'wb') as out, open('stderr.txt','wb') as err:
+            subprocess.Popen([self.exiftool, '-csv', file], stdout=out,stderr=err)
+        print('CSV')
