@@ -1,6 +1,6 @@
 [Contractor Entry]
 Name=Inspektor
-Description=An application for viewing additional file information, designed for elementary OS
+Description=View additional metadata for files
 MimeType=!archive;inode/blockdevice;inode/chardevice;inode/fifo;inode/socket;
 Icon=com.github.hezral.inspektor
 Exec=com.github.hezral.inspektor %F
