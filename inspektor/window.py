@@ -23,30 +23,25 @@ import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Pango
-from constants import data
+from constants import data, app
 from parser import parser
+from about import AboutInspektor
 
 
-class inspektorWindow(Gtk.ApplicationWindow):
-    def __init__(self, parser, *args, **kwargs):
+class InspektorWindow(Gtk.ApplicationWindow):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.basedata = data().basedata
-        self.parser = parser
+        self.parser = parser()
         self.file = None
         
-        # applicationwindow construct
-        self.props.title = "Inspektor"
-        #self.set_icon_name("com.github.hezral.inspektor")
+        self.props.title = app.app_name
         self.props.resizable = False
-        # self.props.deletable = False
-        # self.set_keep_above(True)
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
         self.props.border_width = 0
         self.get_style_context().add_class("rounded")
         self.set_default_size(400, 560)
-        #self.set_icon_name("accessories-camera")
-
 
         # header label filename construct
         self.filename = Gtk.Label()
@@ -56,6 +51,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.filename.props.max_width_chars = 40
         self.filename.props.ellipsize = Pango.EllipsizeMode.MIDDLE
         self.filename.props.selectable = False
+        self.filename.props.margin_top = 4
         
         # header label fileicon construct
         self.fileicon = Gtk.Image.new_from_icon_name("unknown", Gtk.IconSize.DIALOG)
@@ -70,7 +66,6 @@ class inspektorWindow(Gtk.ApplicationWindow):
         header_label_grid.props.column_spacing = 12
         header_label_grid.attach(self.fileicon, 0, 1, 1, 1)
         header_label_grid.attach_next_to(self.filename, self.fileicon, Gtk.PositionType.RIGHT, 1, 1)
-
 
         # basic data grid construct
         self.base_data_grid = Gtk.Grid()
@@ -88,6 +83,8 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.file_comments.set_text("")
         comments_textview = Gtk.TextView(buffer=self.file_comments)
         comments_textview.props.margin = 4
+        comments_textview.props.wrap_mode = Gtk.WrapMode.WORD_CHAR
+        comments_textview.connect('focus-out-event',self.update_file_comments)
 
         comments_scrolledview = Gtk.ScrolledWindow()
         comments_scrolledview.add(comments_textview)
@@ -112,10 +109,8 @@ class inspektorWindow(Gtk.ApplicationWindow):
         base_grid.props.column_spacing = 6
         base_grid.props.row_spacing = 12
         base_grid.attach(self.base_data_grid, 0, 1, 1, 1)
-        base_grid.attach(Gtk.HSeparator(), 0, 2, 1, 1)
+        base_grid.attach(Gtk.Separator(), 0, 2, 1, 1)
         base_grid.attach(comments_grid, 0, 3, 1, 1)
-
-
 
         # extended data grid construct
         self.extended_data_grid = Gtk.Grid()
@@ -126,10 +121,10 @@ class inspektorWindow(Gtk.ApplicationWindow):
         self.extended_data_grid.props.column_spacing = 6
         self.extended_data_grid.props.row_spacing = 6
 
-        extended_scrolledview = Gtk.ScrolledWindow()
-        extended_scrolledview.add(self.extended_data_grid)
-        extended_scrolledview.props.shadow_type = Gtk.ShadowType(3)
-        extended_scrolledview.props.vscrollbar_policy = Gtk.PolicyType(1)
+        self.extended_scrolledview = Gtk.ScrolledWindow()
+        self.extended_scrolledview.add(self.extended_data_grid)
+        self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(3)
+        self.extended_scrolledview.props.vscrollbar_policy = Gtk.PolicyType(1)
 
         # base grid for stack
         extended_grid = Gtk.Grid()
@@ -137,7 +132,7 @@ class inspektorWindow(Gtk.ApplicationWindow):
         extended_grid.props.margin = 24
         extended_grid.props.column_spacing = 6
         extended_grid.props.row_spacing = 6
-        extended_grid.attach(extended_scrolledview, 0, 1, 1, 1)
+        extended_grid.attach(self.extended_scrolledview, 0, 1, 1, 1)
 
         # info stack contstruct
         stack = Gtk.Stack()
@@ -155,36 +150,92 @@ class inspektorWindow(Gtk.ApplicationWindow):
         stack_switcher.props.expand = False
         stack_switcher.show()
 
+        # export construct
+        export_button = Gtk.Button(label="Export", image=Gtk.Image.new_from_icon_name("document-export", Gtk.IconSize.LARGE_TOOLBAR))
+        export_button.set_always_show_image(True)
+        export_button.props.halign = Gtk.Align.START
+        export_button.get_style_context().add_class('flat')
+        export_button.connect('clicked', self.on_export)
 
-        # actions grid construct
-        action_grid = Gtk.Grid()
-        action_grid.props.margin_top = 12
-        action_grid.props.margin_left = 24
-        action_grid.props.margin_right = 24
-        action_grid.props.column_spacing = 12
-        export_json_button = Gtk.Button.new_from_icon_name("open-menu", Gtk.IconSize.LARGE_TOOLBAR)
-        export_json_button.get_style_context().add_class('flat')
-        export_csv_button = Gtk.Button.new_from_icon_name("open-menu", Gtk.IconSize.LARGE_TOOLBAR)
+        export_json_button = Gtk.Button(label="Export to JSON", image=Gtk.Image.new_from_icon_name("text-css", Gtk.IconSize.LARGE_TOOLBAR))
+        export_json_button.set_always_show_image(True)
+        export_json_button.props.halign = Gtk.Align.FILL
+        export_json_button.connect('clicked', self.on_export_json)
 
+        export_csv_button = Gtk.Button(label="Export to CSV", image=Gtk.Image.new_from_icon_name("application-vnd.ms-excel", Gtk.IconSize.LARGE_TOOLBAR))
+        export_csv_button.set_always_show_image(True)
+        export_csv_button.props.halign = Gtk.Align.FILL
+        export_csv_button.connect('clicked', self.on_export_csv)
 
-        separator = Gtk.Separator()
-        separator.set_orientation(Gtk.Orientation.HORIZONTAL)
-        status_bar = Gtk.Label()
-        status_bar.props.margin = 10
-        status_bar.props.halign = Gtk.Align.END
+        export_txt_button = Gtk.Button(label="Export to TXT", image=Gtk.Image.new_from_icon_name("text-x-generic", Gtk.IconSize.LARGE_TOOLBAR))
+        export_txt_button.set_always_show_image(True)
+        export_txt_button.props.halign = Gtk.Align.FILL
+        export_txt_button.connect('clicked', self.on_export_txt)
 
+        popover_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        popover_box.props.margin_left = 10
+        popover_box.props.margin_right = 10
+        popover_box.props.margin_top = 8
+        popover_box.props.margin_bottom = 6
+        popover_box.pack_start(export_json_button, True, True, 4)
+        popover_box.pack_start(export_csv_button, True, True, 4)
+        popover_box.pack_start(export_txt_button, True, True, 4)
+
+        self.export_popover = Gtk.Popover()
+        self.export_popover.add(popover_box)
+        self.export_popover.set_position(Gtk.PositionType.RIGHT)
+        self.export_popover.set_modal(True)
+
+        # about
+        about_button = Gtk.Button(image=Gtk.Image.new_from_icon_name("help-faq", Gtk.IconSize.LARGE_TOOLBAR))
+        about_button.set_always_show_image(True)
+        about_button.get_style_context().add_class('flat')
+        about_button.connect('clicked', self.on_about)
+
+        # actions box construct
+        action_box = Gtk.HBox()
+        action_box.pack_start(export_button, True, True, 0)
+        action_box.pack_end(about_button, False, False, 0)
 
         # layout contruct
         layout = Gtk.Grid()
         layout.attach(header_label_grid, 0, 1, 1, 1)
-        layout.attach(stack_switcher, 0, 2, 2, 1)
-        layout.attach(stack, 0, 3, 2, 1)
-        layout.attach(separator, 0, 4, 2, 1)
-        layout.attach(status_bar, 0, 5, 2, 4)
+        layout.attach(stack_switcher, 0, 2, 1, 1)
+        layout.attach(stack, 0, 3, 1, 1)
+        layout.attach(Gtk.Separator(), 0, 4, 1, 1)
+        layout.attach(action_box, 0, 5, 1, 1)
         layout.props.expand = True
 
         self.add(layout)
 
+    def on_export_json(self, button):
+        self.parser.export_json(self.file.get_path())
+        self.export_popover.hide()
+    
+    def on_export_csv(self, button):
+        self.parser.export_csv(self.file.get_path())
+        self.export_popover.hide()
+
+    def on_export_txt(self, button):
+        self.parser.export_txt(self.file.get_path())
+        self.export_popover.hide()
+
+    def on_export(self, button):
+        self.export_popover.set_relative_to(button)
+        self.export_popover.show_all()
+        self.export_popover.popup()
+
+    def on_about(self, button):
+        about = AboutInspektor(self)
+        about.show_all()
+
+
+    def update_file_comments(self, textview, event):
+        startIter, endIter = textview.get_buffer().get_bounds()
+        text = textview.get_buffer().get_text(startIter, endIter, True)
+        if text != self.get_comments:
+            self.parser.set_file_comments(self.file.get_path(),text)
+        pass
 
     def get_fileicon(self, file):
         size = 48
@@ -200,11 +251,16 @@ class inspektorWindow(Gtk.ApplicationWindow):
                     pass
 
     def load_metadata(self, file, dict):
-
+        # get selected file
         self.file = file
+
+        # get file comments
+        self.get_comments = self.parser.get_file_comments(self.file.get_path())
+        self.file_comments.set_text(self.get_comments)
 
         # set the file icon
         self.get_fileicon(file.get_path())
+
         # set file name
         self.filename.set_label(str(dict['FileName']))
         self.filename.set_tooltip_text(self.filename.get_label())
@@ -219,11 +275,8 @@ class inspektorWindow(Gtk.ApplicationWindow):
 
         i = 1
         for key in self.basedata:
-            # title = titleLabel(key)
-            # value = valueLabel(dict[key])
             label = dataLabel(key, str(dict[key]))
             self.base_data_grid.attach(label, 0, i, 1, 1)
-            #self.base_data_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
             i = i + 1
         
         i = 1
@@ -232,40 +285,9 @@ class inspektorWindow(Gtk.ApplicationWindow):
                 self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
 
             if key not in self.basedata:
-                # title = titleLabel(key)
-                # value = valueLabel(str(dict[key]))
                 label = dataLabel(key, str(dict[key]))
                 self.extended_data_grid.attach(label, 0, i, 1, 1)
-                #self.extended_data_grid.attach_next_to(value, title, Gtk.PositionType.RIGHT, 1, 1)
                 i = i + 1
-        
-        
-
-class valueLabel(Gtk.Label):
-    def __init__(self, title):
-        super().__init__()
-        self.props.halign = Gtk.Align.START
-        self.props.valign = Gtk.Align.START
-        self.props.selectable = True
-        #self.props.max_width_chars = 30
-        self.props.wrap = True
-        self.props.wrap_mode = Pango.WrapMode.CHAR
-        if title is None:
-            self.set_label('unknown')
-        else:
-            self.set_label(title)
-
-
-class titleLabel(Gtk.Label):
-    def __init__(self, title):
-        super().__init__()
-        self.props.halign = Gtk.Align.END
-        self.props.valign = Gtk.Align.START
-        self.props.wrap = True
-        self.props.selectable = True
-        self.props.wrap_mode = Pango.WrapMode.WORD_CHAR
-        title = title + ': '
-        self.set_label(title)
 
 
 class dataLabel(Gtk.Label):
@@ -275,10 +297,8 @@ class dataLabel(Gtk.Label):
         self.props.valign = Gtk.Align.START
         self.props.wrap = True
         self.props.selectable = True
-        #self.props.wrap_mode = Pango.WrapMode.CHAR
         self.props.max_width_chars = 48
         self.props.ellipsize = Pango.EllipsizeMode.END
-        #self.props.expand = True
         label = title + ': ' + value
         self.set_label(label)
         if len(label) > 50:

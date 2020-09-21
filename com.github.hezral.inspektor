@@ -40,5 +40,5 @@ except ImportError:
 
 
 if __name__ == "__main__":
-    app = inspektor.application.inspektorApp()
+    app = inspektor.application.InspektorApp()
     app.run(sys.argv)

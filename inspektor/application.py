@@ -25,15 +25,15 @@ import argparse
 import shutil
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, GLib
-from window import inspektorWindow
+from window import InspektorWindow
 from parser import parser
 from constants import app
 
-class inspektorApp(Gtk.Application):
+class InspektorApp(Gtk.Application):
     def __init__(self):
         super().__init__()
 
-        self.props.application_id = app.application_id
+        self.props.application_id = app.app_id
         self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
         # set dark theme
@@ -63,7 +63,7 @@ class inspektorApp(Gtk.Application):
         if self.window is None:
             # Windows are associated with the application 
             # when the last one is closed the application shuts down
-            self.window = inspektorWindow(self.parser, application=self)
+            self.window = InspektorWindow(application=self)
             self.add_window(self.window)
 
         if self.file is None:
@@ -79,7 +79,6 @@ class inspektorApp(Gtk.Application):
             self.window.load_metadata(self.file, metadata)
             
             self.window.show_all()
-
         else:
             self.quit()
 
@@ -116,5 +115,5 @@ class inspektorApp(Gtk.Application):
 
 
 if __name__ == "__main__":
-    app = inspektorApp()
+    app = InspektorApp()
     app.run(sys.argv)

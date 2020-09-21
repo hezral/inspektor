@@ -63,25 +63,29 @@ class parser(object):
         return permissions
 
     def get_file_comments(self, file):
-        run_executable = subprocess.Popen([self.getfattr, file], stdout=subprocess.PIPE)
+        run_executable = subprocess.Popen([self.getfattr, '-n', 'user.comment', '--only-values', '--absolute-names', file], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         stdout, stderr = run_executable.communicate()
-        file_comments = stdout
+        file_comments = stdout.decode('utf-8')
         return file_comments
 
-    def set_file_comments(self, file):
-        run_executable = subprocess.Popen([self.setfattr, file], stdout=subprocess.PIPE)
-        stdout, stderr = run_executable.communicate()
-        
+    def set_file_comments(self, file, text):
+        run_executable = subprocess.Popen([self.setfattr, '-n', 'user.comment', '-v', text, file], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        run_executable.communicate()
         
 
     def export_json(self, file):
         outfile = file + '_metadata.json'
-        with open(outfile,'wb') as out, open('stderr.txt','wb') as err:
-            subprocess.Popen([self.exiftool, '-j', file], stdout=out,stderr=err)
-        print('JSON')
+        with open(outfile,'wb') as out:
+            subprocess.Popen([self.exiftool, '-j', file], stdout=out,stderr=subprocess.DEVNULL)
+
 
     def export_csv(self, file):
         outfile = file + '_metadata.csv'
-        with open(outfile,'wb') as out, open('stderr.txt','wb') as err:
-            subprocess.Popen([self.exiftool, '-csv', file], stdout=out,stderr=err)
-        print('CSV')
+        with open(outfile,'wb') as out:
+            subprocess.Popen([self.exiftool, '-csv', file], stdout=out,stderr=subprocess.DEVNULL)
+
+    def export_txt(self, file):
+        outfile = file + '_metadata.txt'
+        with open(outfile,'wb') as out:
+            subprocess.Popen([self.exiftool, file], stdout=out,stderr=subprocess.DEVNULL)
+

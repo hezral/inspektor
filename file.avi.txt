@@ -1,0 +1,45 @@
+ExifTool Version Number         : 10.80
+File Name                       : file.avi
+Directory                       : .
+File Size                       : 10 MB
+File Modification Date/Time     : 2020:03:29 19:11:21+08:00
+File Access Date/Time           : 2020:03:29 19:11:29+08:00
+File Inode Change Date/Time     : 2020:03:29 19:11:29+08:00
+File Permissions                : rw-rw-r--
+File Type                       : AVI
+File Type Extension             : avi
+MIME Type                       : video/x-msvideo
+Frame Rate                      : 29.97
+Max Data Rate                   : 0 kB/s
+Frame Count                     : 42963
+Stream Count                    : 2
+Stream Type                     : Video
+Video Codec                     : wmv3
+Video Frame Rate                : 29.97
+Video Frame Count               : 42963
+Quality                         : 10000
+Sample Size                     : Variable
+BMP Version                     : Unknown (46)
+Image Width                     : 640
+Image Height                    : 480
+Planes                          : 1
+Bit Depth                       : 24
+Compression                     : WMV3
+Image Length                    : 921600
+Pixels Per Meter X              : 0
+Pixels Per Meter Y              : 0
+Num Colors                      : Use BitDepth
+Num Important Colors            : All
+Red Mask                        : 0x011a288f
+Audio Codec                     : 
+Audio Sample Rate               : 46.88
+Audio Sample Count              : 67194
+Encoding                        : AAC
+Num Channels                    : 2
+Sample Rate                     : 48000
+Avg Bytes Per Sec               : 18451
+Bits Per Sample                 : 0
+Stream Name                     : gs1 AC3 T01 2_0ch 448Kbps DELAY 0ms
+Duration                        : 0:23:53
+Image Size                      : 640x480
+Megapixels                      : 0.307
