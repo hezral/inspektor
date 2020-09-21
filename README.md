@@ -1,2 +1,2 @@
 # inspektor
-An application for viewing additional file information, designed for elementary OS
+An application for viewing metadata information in files
