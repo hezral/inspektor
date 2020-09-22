@@ -53,11 +53,8 @@ com.github.hezral.inspektor
 ```
 
 ## How to run in elementary OS
-```bash
 Right click on a file and select File Inspektor
-![demo](data/action.gif?raw=true)
-
-```
+![](data/action.gif)
 
 ## Thanks/Credits
 
