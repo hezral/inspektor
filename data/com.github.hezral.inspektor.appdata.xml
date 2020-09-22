@@ -33,10 +33,6 @@
   </screenshots>
   <url type="homepage">https://github.com/hezral/inspektor</url>
   <url type="bugtracker">https://github.com/hezral/inspektor/issues/labels/bug</url>
-  <custom>
-     <value key="x-appcenter-color-primary">#F0E5F2</value>
-     <value key="x-appcenter-color-primary-text">#95005D</value>
-  </custom>
 ​  <releases>
 ​    <release version="1.0.0" date="2020-09-22">
 ​      <description>
