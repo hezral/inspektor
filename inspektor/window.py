@@ -38,6 +38,7 @@ class InspektorWindow(Gtk.ApplicationWindow):
         
         self.props.title = app.app_name
         self.props.resizable = False
+        # self.set_keep_above(True)
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
         self.props.border_width = 0
         self.get_style_context().add_class("rounded")

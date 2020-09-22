@@ -36,7 +36,7 @@ Ensure you have these dependencies installed
 * setfattr
 * getfattr
 
-## Install, build and run
+## Installation
 
 ### From .setup.py
 Download the updated source [here](https://gitlab.com/hezral/inspektor/archive/master.zip), or use git:
@@ -45,14 +45,22 @@ Download the updated source [here](https://gitlab.com/hezral/inspektor/archive/m
 git clone https://gitlab.com/hezral/inspektor.git
 cd inspektor
 sudo python3 setup.py install
+```
 
-
-## How to run
+## How to run from command line
 ```bash
-com.github.mirkobrombin.bottles
+com.github.hezral.inspektor
+```
+
+## How to run in elementary OS
+```bash
+Right click on a file and select File Inspektor
+![demo](data/action.gif?raw=true)
+
 ```
 
 ## Thanks/Credits
 
 - [ExifTool by Phil Harvey](https://exiftool.org/) Won't work without it. 
 - [Extended File Attribues in Linux](https://www.linuxtoday.com/blog/extended-file-attributes-rock.html) Gave me the idea.
+- [ElementaryPython][https://github.com/mirkobrombin/ElementaryPython] This started me off on coding with Python and GTK. 
