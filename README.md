@@ -17,7 +17,7 @@
 </div>
 
 ## Introduction
-Inspektor helps your to view file metadata easily in a window and lets your export. 
+Inspektor helps your to view file metadata easily in a window and export it to JSON, CSV or Text file format. 
 
 
 ## Installation
