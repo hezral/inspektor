@@ -60,4 +60,4 @@ Right click on a file and select File Inspektor
 
 - [ExifTool by Phil Harvey](https://exiftool.org/) Won't work without it. 
 - [Extended File Attribues in Linux](https://www.linuxtoday.com/blog/extended-file-attributes-rock.html) Gave me the idea.
-- [ElementaryPython][https://github.com/mirkobrombin/ElementaryPython] This started me off on coding with Python and GTK. 
+- [ElementaryPython](https://github.com/mirkobrombin/ElementaryPython) This started me off on coding with Python and GTK. 
