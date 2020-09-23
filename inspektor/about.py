@@ -43,6 +43,7 @@ class AboutInspektor(Gtk.AboutDialog):
         self.set_license(app.about_license)
         #self.set_license_type(app.about_license_type)
         self.set_logo_icon_name(app.about_logo_icon_name)
+        self.add_credit_section("ElementaryPython",["Mirko Brombin"])
         self.add_credit_section("ExifTool",["Phil Harvey"])
         self.add_credit_section("Extended Filesystem Attributes", ["setfattr/getfattr"])
         self.connect("response", self.on_response)

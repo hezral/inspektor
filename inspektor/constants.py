@@ -37,7 +37,7 @@ class app:
     about_authors = ["hezral@gmail.com"]
     about_comments = app_description
     about_license_type = Gtk.License.GPL_3_0
-    about_logo_icon_name = "application-vnd.ms-excel"
+    about_logo_icon_name = "com.github.hezral.inspektor"
     about_program_name = app_name
     about_version = app_version
     about_website = "https://github.com/hezral/inspektor"
