@@ -1,7 +1,6 @@
 #! /usr/bin/make -f
 
 export PYBUILD_NAME=inspektor
-export PYBUILD_INSTALL_ARGS ?= --install-lib=/usr/share/com.github.hezral.inspektor
 	
 %:
 	dh $@ --with python3 --buildsystem=pybuild

@@ -2,16 +2,24 @@ Source: com.github.hezral.inspektor
 Section: utils
 Priority: optional
 Maintainer: Adi Hezral <hezral@gmail.com>
-Build-Depends: debhelper (>= 10),
+Build-Depends: debhelper,
                dh-python,
-               python-all,
-               python-setuptools,
+               python3,
+               python3-setuptools,
+               python3-gi,
                libgtk-3-dev,
                exiftools
-Standards-Version: 3.9.3
+               
+Standards-Version: 4.4.1
 
 Package: com.github.hezral.inspektor
 Architecture: any
-Depends: python3, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${python3:Depends},
+         python3,
+         python3-setuptools,
+         python3-gi,
+         libgtk-3-dev,
+         exiftools,
+         ${misc:Depends}
 Description: Inspektor
  View additional metadata for files
