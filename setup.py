@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import glob, os 
+import glob, os
 from distutils.core import setup
 
 project_name = 'com.github.hezral.inspektor'
@@ -28,7 +28,7 @@ install_data = [(share_path + '/metainfo', ['data/com.github.hezral.inspektor.ap
                 (install_path,['inspektor/window.py']),
                 (install_path,['inspektor/parser.py']),
                 (install_path,['inspektor/about.py']),
-                (install_path,['inspektor/constant.py'])]
+                (install_path,['inspektor/constants.py'])]
 
 setup(  name='inspektor',
         version='1.0.0',
