@@ -1,9 +1,0 @@
-inspektor /usr/local/bin/
-inspektor /usr/share/com.github.hezral.inspektor/inspektor
-setup.py /usr/share/com.github.hezral.inspektor
-com.github.hezral.inspektor /usr/local/bin
-com.github.hezral.inspektor /usr/share/com.github.hezral.inspektor
-data /usr/share/com.github.hezral.inspektor
-data/com.github.hezral.inspektor.svg /usr/local/share/icons/hicolor/128x128/apps
-data/com.github.hezral.inspektor.desktop /usr/local/share/applications
-
