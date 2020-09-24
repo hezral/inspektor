@@ -9,9 +9,7 @@ Build-Depends: debhelper,
                python3-gi,
                libgtk-3-dev,
                exiftools
-               
 Standards-Version: 4.4.1
-
 Package: com.github.hezral.inspektor
 Architecture: any
 Depends: ${python3:Depends},
