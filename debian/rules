@@ -9,7 +9,5 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-export PYTHON_VERSIONS   = $(shell python2 --version |& sed 's/.* \(.*\)\..*/\1/'; python3 --version |& sed 's/.* \(.*\)\..*/\1/')
-
 %:
 	dh $@ --with python3 --buildsystem=pybuild
