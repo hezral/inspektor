@@ -1,10 +1,10 @@
 <div align="center">
 
-![icon](data/com.github.hezral.inspektor.svg)
+![icon](data/icons/com.github.hezral.inspektor.svg)
 
 # Inspektor
 
-## View and export file metadata easily. A GUI for ExifTool, Setfattr and Getfattr. 
+## Inspektor helps your to view file metadata easily in a window and export it to JSON, CSV or Text file format. 
 </div>
   
 <div align="center">
@@ -16,10 +16,6 @@
 
 </div>
 
-## Introduction
-Inspektor helps your to view file metadata easily in a window and export it to JSON, CSV or Text file format. 
-
-
 ## Installation
 
 # Install it from source
@@ -28,7 +24,8 @@ You can of course download and install this app from source.
 
 ## Dependencies
 
-Ensure you have these dependencies installed
+Ensure you have these dependencies installed. 
+Except for ExifTool, your Linux distribution may/may not have this already installed. 
 
 * python3
 * libgtk-3-dev
