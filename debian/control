@@ -2,7 +2,8 @@ Source: com.github.hezral.inspektor
 Section: utils
 Priority: optional
 Maintainer: Adi Hezral <hezral@gmail.com>
-Build-Depends: debhelper (>= 10)
+Build-Depends: debhelper (>= 10),
+               python3
 X-Python3-Version: >= 3.6
 Standards-Version: 3.9.3
 
