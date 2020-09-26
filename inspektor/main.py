@@ -17,27 +17,10 @@
     You should have received a copy of the GNU General Public License
     along with Inspektor.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import os
-import sys
 
-# Get launch script dir
-launch_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+from application import InspektorApp
 
-# Update sys.path to include modules
-if launch_dir == "/usr/bin":
-    modules_path = "/usr/share/com.github.hezral.inspektor/"
-else:
-    modules_path = launch_dir + "/inspektor"
-
-sys.path.insert(0, modules_path)
-
-try:
-    import application
-except ImportError:
-    print("Failed to import module main.py!")
-    print("Installation was assumed to be at:", modules_path)
-    sys.exit(1)
-
-app = application.InspektorApp()
-app.run(sys.argv)
 

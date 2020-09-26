@@ -113,7 +113,3 @@ class InspektorApp(Gtk.Application):
         if file is not None:
             return file
 
-
-if __name__ == "__main__":
-    app = InspektorApp()
-    app.run(sys.argv)

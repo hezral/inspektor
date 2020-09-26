@@ -23,13 +23,17 @@ import sys
 # Get launch script dir
 launch_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-# Update sys.path to include modules
-if launch_dir == "/usr/bin":
-    modules_path = "/usr/share/com.github.hezral.inspektor/"
-else:
-    modules_path = launch_dir + "/inspektor"
+# # Update sys.path to include modules
+# if launch_dir == "/usr/bin":
+#     modules_path = "/usr/share/com.github.hezral.inspektor/"
+# else:
+#     modules_path = launch_dir + "/inspektor"
+
+modules_path = "/usr/share/com.github.hezral.inspektor/"
 
 sys.path.insert(0, modules_path)
+
+print(sys.path)
 
 try:
     import application
