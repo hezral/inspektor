@@ -3,7 +3,8 @@ Section: utils
 Priority: optional
 Maintainer: Adi Hezral <hezral@gmail.com>
 Build-Depends: debhelper (>= 10),
-               python3
+               python3,
+               config-package-dev
 X-Python3-Version: >= 3.6
 Standards-Version: 3.9.3
 
