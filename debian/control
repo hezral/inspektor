@@ -3,8 +3,8 @@ Section: utils
 Priority: optional
 Maintainer: Adi Hezral <hezral@gmail.com>
 Build-Depends: debhelper (>= 10),
-               dh-python
-               python3-all
+               dh-python,
+               python3
 X-Python3-Version: >= 3.6.9
 Standards-Version: 3.9.3
 
