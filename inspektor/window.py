@@ -188,7 +188,7 @@ class InspektorWindow(Gtk.ApplicationWindow):
         self.export_popover.set_modal(True)
 
         # about
-        about_button = Gtk.Button(image=Gtk.Image.new_from_icon_name("help-faq", Gtk.IconSize.LARGE_TOOLBAR))
+        about_button = Gtk.Button(image=Gtk.Image.new_from_icon_name(app.app_id, Gtk.IconSize.LARGE_TOOLBAR))
         about_button.set_always_show_image(True)
         about_button.get_style_context().add_class('flat')
         about_button.connect('clicked', self.on_about)
