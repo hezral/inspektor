@@ -35,13 +35,20 @@ Except for ExifTool, your Linux distribution may/may not have this already insta
 
 ## Installation
 
-### From .setup.py
 Download the updated source [here](https://gitlab.com/hezral/inspektor/archive/master.zip), or use git:
-
 ```bash
 git clone https://gitlab.com/hezral/inspektor.git
 cd inspektor
+```
+
+### From .setup.py
 sudo python3 setup.py install
+
+
+### From meson
+```bash
+meson build --prefix /usr
+sudo ninja -C build install
 ```
 
 ## How to run from command line
