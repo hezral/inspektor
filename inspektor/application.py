@@ -112,4 +112,3 @@ class InspektorApp(Gtk.Application):
             #self.window.destroy()
         if file is not None:
             return file
-

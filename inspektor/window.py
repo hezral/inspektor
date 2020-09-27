@@ -161,16 +161,19 @@ class InspektorWindow(Gtk.ApplicationWindow):
         export_json_button = Gtk.Button(label="Export to JSON", image=Gtk.Image.new_from_icon_name("text-css", Gtk.IconSize.LARGE_TOOLBAR))
         export_json_button.set_always_show_image(True)
         export_json_button.props.halign = Gtk.Align.FILL
+        export_json_button.props.xalign = 0.0
         export_json_button.connect('clicked', self.on_export_json)
 
-        export_csv_button = Gtk.Button(label="Export to CSV", image=Gtk.Image.new_from_icon_name("application-vnd.ms-excel", Gtk.IconSize.LARGE_TOOLBAR))
+        export_csv_button = Gtk.Button(label="Export to CSV ", image=Gtk.Image.new_from_icon_name("application-vnd.ms-excel", Gtk.IconSize.LARGE_TOOLBAR))
         export_csv_button.set_always_show_image(True)
         export_csv_button.props.halign = Gtk.Align.FILL
+        export_csv_button.props.xalign = 0.0
         export_csv_button.connect('clicked', self.on_export_csv)
 
-        export_txt_button = Gtk.Button(label="Export to TXT", image=Gtk.Image.new_from_icon_name("text-x-generic", Gtk.IconSize.LARGE_TOOLBAR))
+        export_txt_button = Gtk.Button(label="Export to TXT ", image=Gtk.Image.new_from_icon_name("text-x-generic", Gtk.IconSize.LARGE_TOOLBAR))
         export_txt_button.set_always_show_image(True)
         export_txt_button.props.halign = Gtk.Align.FILL
+        export_txt_button.props.xalign = 0.0
         export_txt_button.connect('clicked', self.on_export_txt)
 
         popover_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
