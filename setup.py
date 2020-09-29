@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import glob, os
+from os import environ, path
+from subprocess import call
 from distutils.core import setup
+from setuptools.command.install import install
 
 project_name = 'com.github.hezral.inspektor'
 share_path = '/usr/share'
@@ -30,6 +33,17 @@ install_data = [(share_path + '/metainfo', ['data/com.github.hezral.inspektor.ap
                 (install_path,['inspektor/about.py']),
                 (install_path,['inspektor/constants.py'])]
 
+class PostInstall(install):
+    prefix = environ.get('MESON_INSTALL_PREFIX', '/usr')
+    datadir = path.join(prefix, 'share')
+    destdir = environ.get('DESTDIR', '')
+
+    if not destdir:
+        print('Updating icon cache...')
+        call(['gtk-update-icon-cache', '-qtf', path.join(datadir, 'icons', 'hicolor')])
+        # print("Installing new Schemas")
+        # call(['glib-compile-schemas', path.join(datadir, 'glib-2.0/schemas')])
+
 setup(  name='inspektor',
         version='1.0.0',
         author='Adi Hezral',
@@ -38,4 +52,5 @@ setup(  name='inspektor',
         license='GNU GPL3',
         scripts=['com.github.hezral.inspektor'],
         packages=['inspektor'],
-        data_files=install_data)
+        data_files=install_data,
+        cmdclass={'install': PostInstall})
