@@ -39,5 +39,5 @@ venv.bak/
 *.heic
 *.mov
 
-build
-builddir
+build/
+builddir/
