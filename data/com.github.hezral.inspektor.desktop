@@ -2,7 +2,7 @@
 Name=Inspektor
 GenericName=Inspektor
 Comment=View additional metadata for files
-Categories=Accessories;
+Categories=Utility;
 Exec=com.github.hezral.inspektor
 Icon=com.github.hezral.inspektor
 Terminal=false
