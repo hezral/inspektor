@@ -38,3 +38,6 @@ venv.bak/
 *.jpeg
 *.heic
 *.mov
+
+build
+builddir
