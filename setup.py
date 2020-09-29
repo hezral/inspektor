@@ -44,6 +44,7 @@ class PostInstall(install):
         # print("Installing new Schemas")
         # call(['glib-compile-schemas', path.join(datadir, 'glib-2.0/schemas')])
 
+
 setup(  name='inspektor',
         version='1.0.0',
         author='Adi Hezral',
