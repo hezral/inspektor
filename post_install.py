@@ -3,7 +3,7 @@
 from os import environ, path
 from subprocess import call
 
-prefix = environ.get('MESON_INSTALL_PREFIX', '/usr')
+prefix = environ.get('MESON_INSTALL_PREFIX', '/usr/local')
 datadir = path.join(prefix, 'share')
 destdir = environ.get('DESTDIR', '')
 
