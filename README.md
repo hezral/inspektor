@@ -42,7 +42,9 @@ cd inspektor
 ```
 
 ### From .setup.py
+In the inspektor file directory:
 sudo python3 setup.py install
+sudo 
 
 
 ### From meson
