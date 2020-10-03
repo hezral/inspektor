@@ -47,10 +47,14 @@ In the inspektor file directory:
 sudo python3 setup.py install --prefix=/usr --install-data prefix/share --install-purelib prefix/share
 ```
 
-### From meson
+## Uninstallation
+This will output all the installed files.
 ```bash
-meson build --prefix /usr
-sudo ninja -C build install
+sudo python3 setup.py install --prefix=/usr --install-data prefix/share --record files.txt
+```
+Then when you want to uninstall it simply run; be careful with the 'sudo'
+```bash
+cat files.txt | xargs sudo rm -rf
 ```
 
 ## How to run from command line
