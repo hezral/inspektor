@@ -6,13 +6,13 @@ from distutils.core import setup
 project_name = 'com.github.hezral.inspektor'
 share_path = '/usr/share'
 install_path = share_path + '/com.github.hezral.inspektor/inspektor'
-icon_scalable = share_path + '/icons/hicolor/scalable/app'
-icon_16 = share_path + '/icons/hicolor/16x16/app'
-icon_24 = share_path + '/icons/hicolor/24x24/app'
-icon_32 = share_path + '/icons/hicolor/32x32/app'
-icon_48 = share_path + '/icons/hicolor/48x48/app'
-icon_64 = share_path + '/icons/hicolor/64x64/app'
-icon_128 = share_path + '/icons/hicolor/128x128/app'
+icon_scalable = share_path + '/icons/hicolor/scalable/apps'
+icon_16 = share_path + '/icons/hicolor/16x16/apps'
+icon_24 = share_path + '/icons/hicolor/24x24/apps'
+icon_32 = share_path + '/icons/hicolor/32x32/apps'
+icon_48 = share_path + '/icons/hicolor/48x48/apps'
+icon_64 = share_path + '/icons/hicolor/64x64/apps'
+icon_128 = share_path + '/icons/hicolor/128x128/apps'
 
 install_data = [(share_path + '/metainfo', ['data/com.github.hezral.inspektor.appdata.xml']),
                 (share_path + '/applications', ['data/com.github.hezral.inspektor.desktop']),
