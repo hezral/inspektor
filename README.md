@@ -43,9 +43,9 @@ cd inspektor
 
 ### From .setup.py
 In the inspektor file directory:
-sudo python3 setup.py install
-sudo 
-
+```bash
+sudo python3 setup.py install --prefix=/usr --install-data prefix/share --install-purelib prefix/share
+```
 
 ### From meson
 ```bash
