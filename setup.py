@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import glob, os
 from distutils.core import setup
 
 project_name = 'com.github.hezral.inspektor'
 share_path = '/usr/share'
-install_path = share_path + '/com.github.hezral.inspektor/inspektor'
+install_path = share_path + '/com.github.hezral.inspektor/'
 icon_scalable = share_path + '/icons/hicolor/scalable/apps'
 icon_16 = share_path + '/icons/hicolor/16x16/apps'
 icon_24 = share_path + '/icons/hicolor/24x24/apps'
