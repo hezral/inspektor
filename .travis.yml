@@ -22,3 +22,11 @@ install:
 
 script:
   - houston ci
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: build/*.deb
+  skip_cleanup: true
+  on:
+    tags: true
