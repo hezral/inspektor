@@ -66,6 +66,8 @@ class InspektorApp(Gtk.Application):
             self.window = InspektorWindow(application=self)
             self.add_window(self.window)
 
+            self.window.show_all()
+
         if self.file is None:
             self.file = self.filechooser() #GLocalFile object
         else:
