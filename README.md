@@ -4,15 +4,16 @@
 
 # Inspektor
 
+[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.hezral.inspektor)
+
 ## Inspektor helps your to view file metadata easily in a window and export it to JSON, CSV or Text file format. 
+
 </div>
-  
 <div align="center">
 
 ![Screenshot 01](data/screenshot-01.png?raw=true)
 ![Screenshot 02](data/screenshot-02.png?raw=true)
 ![Screenshot 03](data/screenshot-03.png?raw=true)
-
 
 </div>
 
