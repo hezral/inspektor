@@ -83,6 +83,7 @@ class InspektorApp(Gtk.Application):
             self.window.show_all()
         else:
             self.quit()
+        
 
         
 
@@ -103,6 +104,8 @@ class InspektorApp(Gtk.Application):
         filechooserdialog.set_transient_for(self.window)
         filechooserdialog.set_destroy_with_parent(False)
         filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
+        filechooserdialog.set_size_request(320, 480)
+        filechooserdialog.set_default_size(320, 480)
         
         response = filechooserdialog.run()
         file = None

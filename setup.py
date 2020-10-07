@@ -36,5 +36,4 @@ setup(  name='inspektor',
         url='https://github.com/hezral/inspektor',
         license='GNU GPL3',
         scripts=['com.github.hezral.inspektor'],
-        packages=['inspektor'],
         data_files=install_data)

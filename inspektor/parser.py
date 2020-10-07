@@ -39,13 +39,13 @@ class parser(object):
 
         try:
             self.setfattr = which("setfattr")
-            #("Found exiftool installed at", self.setfattr)
+            #print("Found setfattr installed at", self.setfattr)
         except Error as error:
             print("Shutil: ", error)
 
         try:
             self.getfattr = which("getfattr")
-            #print("Found exiftool installed at", self.getfattr)
+            #print("Found getfattr installed at", self.getfattr)
         except Error as error:
             print("Shutil: ", error)
  
