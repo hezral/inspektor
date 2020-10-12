@@ -64,6 +64,8 @@ along with inspektor.  If not, see <http://www.gnu.org/licenses/>.
 
 class data:
     basedata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions','FileType','FileTypeExtension','MIMEType')
+    mindata = ('FileName','Directory','FileSize','FileModifyDate','FileAccessDate','FileInodeChangeDate','FilePermissions')
+
 
 class tools:
     tools = ('exiftool','setfattr','getfattr')

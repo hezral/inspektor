@@ -32,7 +32,6 @@ class InspektorWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.basedata = data().basedata
         self.parser = parser()
         self.file = None
         
@@ -277,21 +276,39 @@ class InspektorWindow(Gtk.ApplicationWindow):
         for child in extended_data_grid_children:
             self.extended_data_grid.remove(child)
 
-        i = 1
-        for key in self.basedata:
-            label = dataLabel(key, str(dict[key]))
-            self.base_data_grid.attach(label, 0, i, 1, 1)
-            i = i + 1
-        
-        i = 1
-        for key in sorted (dict.keys()):
-            if len(dict.keys()) < 15:
-                self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
-
-            if key not in self.basedata:
+        # add error checking if exiftool doesn't support a file format
+        if 'Error' in dict.keys():
+            self.basedata = data().mindata
+            i = 1
+            for key in self.basedata:
                 label = dataLabel(key, str(dict[key]))
-                self.extended_data_grid.attach(label, 0, i, 1, 1)
+                self.base_data_grid.attach(label, 0, i, 1, 1)
                 i = i + 1
+
+            self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
+            label = dataLabel('Error', 'Unsupported file format. No metadata info to show')
+            self.extended_data_grid.attach(label, 0, 1, 1, 1)
+                    
+        else:
+            self.basedata = data().basedata
+            i = 1
+            for key in self.basedata:
+                label = dataLabel(key, str(dict[key]))
+                self.base_data_grid.attach(label, 0, i, 1, 1)
+                i = i + 1
+
+            i = 1
+            for key in sorted (dict.keys()):
+                if len(dict.keys()) < 15:
+                    self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
+
+                if key not in self.basedata:
+                    label = dataLabel(key, str(dict[key]))
+                    self.extended_data_grid.attach(label, 0, i, 1, 1)
+                    i = i + 1
+
+        # present the window again in case its behind any window. usually if invoked from contractor menu
+        self.present()
 
 
 class dataLabel(Gtk.Label):
