@@ -8,7 +8,7 @@
   <summary>View and export your files metadata easily</summary>
   <developer_name>Adi Hezral</developer_name>
   <description>
-    <p>View and export your files metadata easily. This ia GUI for ExifTool and Setfattr/Getfattr. Credits goes to each owner of the tools.</p>
+    <p>View and export your files metadata easily. This is a GUI for ExifTool and Setfattr/Getfattr. Credits goes to each owner of the tools.</p>
     <ul>
         <li>Supported file metadata by ExifTool</li>
         <li>Supports adding file comments, provided the filesystem supports it</li>
