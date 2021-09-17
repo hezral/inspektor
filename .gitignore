@@ -39,6 +39,10 @@ venv.bak/
 *.heic
 *.mov
 
-build/
-builddir/
-Inspektor.code-workspace
+# Flatpak
+.flatpak/
+.flatpak-builder/
+build-dir/
+
+# VSCode
+.vscode/

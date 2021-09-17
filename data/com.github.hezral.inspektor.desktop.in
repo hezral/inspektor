@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Inspektor
+Exec=inspektor
+Icon=com.github.hezral.inspektor
+Terminal=false
+Type=Application
+Categories=Utility;
+StartupNotify=true
+Comment=View additional metadata for files

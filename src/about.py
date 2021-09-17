@@ -23,7 +23,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
-from constants import app
+from .constants import app
  
 class AboutInspektor(Gtk.AboutDialog):
     def __init__(self, window, *args, **kwargs):

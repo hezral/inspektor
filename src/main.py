@@ -1,43 +1,43 @@
-#!/usr/bin/env python3
-
-'''
-   Copyright 2020 Adi Hezral (hezral@gmail.com)
-
-   This file is part of inspektor.
-
-    inspektor is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    inspektor is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with inspektor.  If not, see <http://www.gnu.org/licenses/>.
-'''
+# main.py
+#
+# Copyright 2021 Adi Hezral
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import gi
 import argparse
 import shutil
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GLib
-from window import InspektorWindow
-from parser import parser
-from constants import app
 
-class InspektorApp(Gtk.Application):
+from gi.repository import Gtk, Gio, GLib, Granite
+
+from .window import InspektorWindow
+from .parser import parser
+from .constants import app
+
+
+class Application(Gtk.Application):
     def __init__(self):
         super().__init__()
 
         self.props.application_id = app.app_id
         self.props.flags=Gio.ApplicationFlags.HANDLES_OPEN
 
-        # set dark theme
-        Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", True)
+        self.gio_settings = Gio.Settings(schema_id=app.app_id)
+        self.gtk_settings = Gtk.Settings().get_default()
+        self.granite_settings = Granite.Settings.get_default()
 
         self.window = None
         self.file = None
@@ -52,6 +52,14 @@ class InspektorApp(Gtk.Application):
         quit_action.connect("activate", self.on_quit_action)
         self.add_action(quit_action)
         self.set_accels_for_action("app.quit", ["<Ctrl>Q", "Escape"])
+
+        prefers_color_scheme = self.granite_settings.get_prefers_color_scheme()
+        self.gtk_settings.set_property("gtk-application-prefer-dark-theme", prefers_color_scheme)
+        self.granite_settings.connect("notify::prefers-color-scheme", self.on_prefers_color_scheme)
+
+        if "io.elementary.stylesheet" not in self.gtk_settings.props.gtk_theme_name:
+            self.gtk_settings.set_property("gtk-theme-name", "io.elementary.stylesheet.blueberry")
+
 
 
     def do_activate(self):
@@ -117,3 +125,13 @@ class InspektorApp(Gtk.Application):
             #self.window.destroy()
         if file is not None:
             return file
+
+
+    def on_prefers_color_scheme(self, *args):
+        prefers_color_scheme = self.granite_settings.get_prefers_color_scheme()
+        self.gtk_settings.set_property("gtk-application-prefer-dark-theme", prefers_color_scheme)
+    
+
+def main(version):
+    app = Application()
+    return app.run(sys.argv)

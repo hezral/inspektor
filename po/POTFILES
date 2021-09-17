@@ -1,0 +1,8 @@
+data/com.github.hezral.inspektor.desktop.in
+data/com.github.hezral.inspektor.contract.in
+data/com.github.hezral.inspektor.appdata.xml.in
+data/com.github.hezral.inspektor.gschema.xml
+src/window.ui
+src/main.py
+src/window.py
+

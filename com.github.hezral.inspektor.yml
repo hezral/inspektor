@@ -1,0 +1,36 @@
+app-id: com.github.hezral.inspektor
+runtime: io.elementary.Sdk
+runtime-version: '6'
+sdk: io.elementary.Sdk
+command: inspektor
+appstream-compose: false
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=network
+  # needed for perfers-color-scheme
+  - --system-talk-name=org.freedesktop.Accounts
+  - --filesystem=home
+modules:
+
+  - name: attr
+    sources:
+      - type: git
+        url: https://git.savannah.nongnu.org/git/attr.git
+
+  - name: exiftool
+    buildsystem: simple
+    build-commands: 
+      - "perl Makefile.PL PREFIX=${FLATPAK_DEST} LIB=${FLATPAK_DEST}/bin/lib"
+      - "make"
+      - "make test"
+      - "make install"
+    sources:
+      - type: git
+        url: https://github.com/exiftool/exiftool.git
+
+  - name: inspektor
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .

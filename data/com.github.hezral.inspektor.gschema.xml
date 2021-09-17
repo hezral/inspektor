@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="inspektor">
+	<schema id="com.github.hezral.inspektor" path="/com/github/hezral/inspektor/">
+	</schema>
+</schemalist>

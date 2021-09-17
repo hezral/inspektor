@@ -24,7 +24,7 @@ import subprocess
 from shutil import which, Error
 import os
 import stat
-from constants import tools
+from .constants import tools
 
 class parser(object):
     def __init__(self):

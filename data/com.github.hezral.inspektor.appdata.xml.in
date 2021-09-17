@@ -4,8 +4,8 @@
   <id>com.github.hezral.inspektor</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
-  <name>Inspektor</name>
-  <summary>View and export your files metadata easily</summary>
+  <name>Clips</name>
+  <summary>Clipboard Manager</summary>
   <developer_name>Adi Hezral</developer_name>
   <description>
     <p>View and export your files metadata easily. This is a GUI for ExifTool and Setfattr/Getfattr. Credits goes to each owner of the tools.</p>
@@ -68,21 +68,23 @@
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
 
-​  <releases>
-​    <release version="1.0.0" date="2020-09-22">
-​      <description>
-​        <ul>
-            <li>First release</li>
-        </ul>
-​      </description>
-​    </release>
-​  </releases>
+  <releases>
+    <release version="1.0.1" date="2021-09-05">
+      <description>
+        <p>Fixed issue with Persistent Mode and Hide on Startup conflicting behaviour</p>
+        <p>Fixed reveal file action</p>
+        <p>Improved behaviour to have Clips window focused when called</p>
+        <p>Improved description for shortcuts and basic setup instructions</p>
+        <p>Various code clean-ups</p>
+      </description>
+    </release>
+  </releases>
 
   <custom>
     <value key="x-appcenter-color-primary">#B7E1E5</value>
     <value key="x-appcenter-color-primary-text">#29484F</value>
-    <value key="x-appcenter-suggested-price">0</value>
+    <value key="x-appcenter-suggested-price">1.00</value>
+    <value key="x-appcenter-stripe">pk_live_51J03F1AXT8Az6AYFEiPc5mgpv7vUSWDnw135TmPT4tUbB2CJLwG19e3NxEuC7Zbz3VkXg7BygUQOTf7x6UDhSAn8005gq9ywZy</value>
   </custom>
 
 </component>
-

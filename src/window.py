@@ -23,9 +23,9 @@ import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Pango
-from constants import data, app
-from parser import parser
-from about import AboutInspektor
+from .constants import data, app
+from .parser import parser
+from .about import AboutInspektor
 
 
 class InspektorWindow(Gtk.ApplicationWindow):
