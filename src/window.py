@@ -21,14 +21,21 @@
 
 import re
 import gi
+
+gi.require_version('Handy', '1')
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, Pango
+
+from gi.repository import Gtk, Handy, Gio, Pango, Granite
 from .constants import data, app
 from .parser import parser
 from .about import AboutInspektor
 
 
-class InspektorWindow(Gtk.ApplicationWindow):
+class InspektorWindow(Handy.ApplicationWindow):
+    __gtype_name__ = 'StashedWindow'
+    
+    Handy.init()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -190,26 +197,42 @@ class InspektorWindow(Gtk.ApplicationWindow):
         self.export_popover.set_modal(True)
 
         # about
-        about_button = Gtk.Button(image=Gtk.Image.new_from_icon_name(app.app_id, Gtk.IconSize.LARGE_TOOLBAR))
-        about_button.set_always_show_image(True)
-        about_button.get_style_context().add_class('flat')
-        about_button.connect('clicked', self.on_about)
+        # about_button = Gtk.Button(image=Gtk.Image.new_from_icon_name(app.app_id, Gtk.IconSize.LARGE_TOOLBAR))
+        # about_button.set_always_show_image(True)
+        # about_button.get_style_context().add_class('flat')
+        # about_button.connect('clicked', self.on_about)
 
-        # actions box construct
-        action_box = Gtk.HBox()
-        action_box.pack_start(export_button, True, True, 0)
-        action_box.pack_end(about_button, False, False, 0)
+        # # actions box construct
+        # action_box = Gtk.HBox()
+        # action_box.pack_start(export_button, True, True, 0)
+        # action_box.pack_end(about_button, False, False, 0)
 
         # layout contruct
         layout = Gtk.Grid()
         layout.attach(header_label_grid, 0, 1, 1, 1)
         layout.attach(stack_switcher, 0, 2, 1, 1)
         layout.attach(stack, 0, 3, 1, 1)
-        layout.attach(Gtk.Separator(), 0, 4, 1, 1)
-        layout.attach(action_box, 0, 5, 1, 1)
+        # layout.attach(Gtk.Separator(), 0, 4, 1, 1)
+        # layout.attach(action_box, 0, 5, 1, 1)
         layout.props.expand = True
 
-        self.add(layout)
+        self.header = self.generate_headerbar()
+        self.grid = Gtk.Grid()
+        self.grid.props.name = "main"
+        self.grid.props.expand = True
+        self.grid.attach(self.header, 0, 0, 1, 1)
+        self.grid.attach(layout, 0, 1, 1, 1)
+
+        self.add(self.grid)
+
+    def generate_headerbar(self):
+        header = Handy.HeaderBar()
+        header.props.hexpand = True
+        header.props.has_subtitle = False
+        header.props.show_close_button = True
+        header.get_style_context().add_class(Granite.STYLE_CLASS_DEFAULT_DECORATION)
+        header.get_style_context().add_class(Gtk.STYLE_CLASS_FLAT)
+        return header
 
     def on_export_json(self, button):
         self.parser.export_json(self.file.get_path())

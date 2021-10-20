@@ -16,7 +16,7 @@
   </description>
 
   <provides>
-      <binary>com.github.hezral.inspektor</binary>
+      <binary>inspektor</binary>
   </provides>
 
   <url type="homepage">https://github.com/hezral/inspektor</url>

@@ -1,5 +1,5 @@
 app-id: com.github.hezral.inspektor
-runtime: io.elementary.Sdk
+runtime: io.elementary.Platform
 runtime-version: '6'
 sdk: io.elementary.Sdk
 command: inspektor
@@ -13,21 +13,21 @@ finish-args:
   - --filesystem=home
 modules:
 
-  - name: attr
-    sources:
-      - type: git
-        url: https://git.savannah.nongnu.org/git/attr.git
+  # - name: attr
+  #   sources:
+  #     - type: git
+  #       url: https://git.savannah.nongnu.org/git/attr.git
 
-  - name: exiftool
-    buildsystem: simple
-    build-commands: 
-      - "perl Makefile.PL PREFIX=${FLATPAK_DEST} LIB=${FLATPAK_DEST}/bin/lib"
-      - "make"
-      - "make test"
-      - "make install"
-    sources:
-      - type: git
-        url: https://github.com/exiftool/exiftool.git
+  # - name: exiftool
+  #   buildsystem: simple
+  #   build-commands: 
+  #     - "perl Makefile.PL PREFIX=${FLATPAK_DEST} LIB=${FLATPAK_DEST}/bin/lib"
+  #     - "make"
+  #     - "make test"
+  #     - "make install"
+  #   sources:
+  #     - type: git
+  #       url: https://github.com/exiftool/exiftool.git
 
   - name: inspektor
     buildsystem: meson
