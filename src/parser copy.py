@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2021 Adi Hezral <hezral@gmail.com>
 
-import os
-import stat
 import json
 import subprocess
 from shutil import which, Error
+import os
+import stat
+from .constants import tools
 
 class parser(object):
     def __init__(self):
@@ -62,6 +63,7 @@ class parser(object):
         outfile = file + '_metadata.json'
         with open(outfile,'wb') as out:
             subprocess.Popen([self.exiftool, '-j', file], stdout=out,stderr=subprocess.DEVNULL)
+
 
     def export_csv(self, file):
         outfile = file + '_metadata.csv'

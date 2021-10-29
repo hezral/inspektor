@@ -73,3 +73,91 @@ scrolledwindow > undershoot.bottom {
     background-repeat: repeat;
     background-size: auto;
 }
+
+expander arrow {
+    padding-right: 4px;
+}
+
+textview {
+    border-radius: 3px;
+    padding: 6px;
+}
+
+scrolledwindow {
+    border-radius: 3px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.3);
+    border-width: 1px;
+    background-clip: padding-box;
+    box-shadow: 0 1px rgba(255,255,255,0.06), 0 1px 1px rgba(0,0,0,0.5) inset, 0 0 1px 1px rgba(0,0,0,0.05) inset;
+}
+
+label#drop {
+    font-size: 125%;
+    font-weight: bold;
+    color: alpha(@theme_text_color, 0.5);
+}
+
+@keyframes crossfader {
+    0% { opacity: 0; } 
+    03.33% { opacity: 0; }
+    06.66% { opacity: 0; }
+    09.99% { opacity: 0; }
+    13.33% { opacity: 0; }
+    16.65% { opacity: 0.75; }
+    100% { opacity: 1; }	
+}
+
+
+expander > * {
+    animation: crossfader 0.5s ease-in-out forwards;
+}
+
+.checkerboard {
+    background-image:
+      linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%), 
+      linear-gradient(135deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.1) 75%),
+      linear-gradient(135deg, transparent 75%, rgba(0,0,0,0.1) 75%);
+    background-size:24px 24px; /* Must be a square */
+    background-position:0 0, 12px 0, 12px -12px, 0px 12px; /* Must be half of one side of the square */
+}
+
+.dropshadow {
+    /* border-radius: 5px; */
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0,0,0,0.1);
+    background-color: transparent;
+    animation: crossfader 0.25s ease-in-out forwards;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 13px 16px 4px rgba(0,0,0,0), 0 3px 4px rgba(0,0,0,0.25), 0 3px 3px -3px rgba(0,0,0,0.45);
+}
+
+@keyframes pulsing {
+    25% {opacity: 0.25;}
+    75% {opacity: 0.75;}
+    100% {opacity: 1.00;}
+}
+
+.play-pause-shadow {
+    /* box-shadow: 0 0 0 1px rgba(0,0,0,0.75), 0 13px 16px 4px rgba(0,0,0,0), 0 2px 4px 2px rgba(0,0,0,0.2), 0 15px 12px -10px rgba(0,0,0,0.5), 0 8px 14px 4px rgba(0,0,0,0.25); */
+    background-color: rgba(0,0,0,0.25);
+    /* padding: 10px; */
+    border-radius: 16px;
+
+}
+
+/* .play-pause-shadow-overlay {
+    box-shadow: 0 -1px rgba(255,255,255,0.04) inset, 0 1px rgba(255,255,255,0.06) inset, 1px 0 rgba(255,255,255,0.014) inset, -1px 0 rgba(255,255,255,0.014) inset;
+} */
+
+.icon-dropshadow {
+    -gtk-icon-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.copied-widget {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+}

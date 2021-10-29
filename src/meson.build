@@ -1,6 +1,3 @@
-pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
-moduledir = join_paths(pkgdatadir, 'inspektor')
-
 python = import('python')
 
 conf = configuration_data()
@@ -11,7 +8,7 @@ conf.set('pkgdatadir', pkgdatadir)
 
 configure_file(
   input: 'inspektor.in',
-  output: 'inspektor',
+  output: 'com.github.hezral.inspektor',
   configuration: conf,
   install: true,
   install_dir: get_option('bindir')
@@ -21,9 +18,17 @@ inspektor_sources = [
   '__init__.py',
   'main.py',
   'window.py',
+  'drop_view.py',
+  'base_view.py',
+  'extended_view.py',
+  'mode_switch.py',
   'about.py',
   'constants.py',
-  'parser.py'
+  'utils.py',
+  'file_inspeck.py',
+  'waveform.py',
+  'playaudio.py',
+  'playvideo.py'
 ]
 
 install_data(inspektor_sources, install_dir: moduledir)

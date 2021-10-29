@@ -16,7 +16,7 @@
   </description>
 
   <provides>
-      <binary>inspektor</binary>
+      <binary>com.github.hezral.inspektor</binary>
   </provides>
 
   <url type="homepage">https://github.com/hezral/inspektor</url>
@@ -69,7 +69,7 @@
   </content_rating>
 
   <releases>
-    <release version="1.0.1" date="2021-09-05">
+    <release version="2.0.0" date="2021-09-05">
       <description>
         <p>Fixed issue with Persistent Mode and Hide on Startup conflicting behaviour</p>
         <p>Fixed reveal file action</p>

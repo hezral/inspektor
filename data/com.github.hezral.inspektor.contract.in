@@ -3,4 +3,4 @@ Name=Inspektor
 Description=View additional metadata for files
 MimeType=!archive;inode/blockdevice;inode/chardevice;inode/fifo;inode/socket;
 Icon=com.github.hezral.inspektor
-Exec=gtk-launch com.github.hezral.inspektor %F
+Exec=com.github.hezral.inspektor %F

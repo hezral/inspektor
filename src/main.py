@@ -1,34 +1,25 @@
-# main.py
-#
-# Copyright 2021 Adi Hezral
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2021 Adi Hezral <hezral@gmail.com>
 
 import sys
-import gi
-import argparse
-import shutil
-gi.require_version('Gtk', '3.0')
+import os
 
-from gi.repository import Gtk, Gio, Granite
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Granite', '1.0')
+
+from gi.repository import Gtk, Gio, Granite, Gdk
 
 from .window import InspektorWindow
-from .parser import parser
 from .constants import app
+from .utils import HelperUtils
+from .file_inspeck import FileInspeck
 
+import argparse
+import shutil
 
 class Application(Gtk.Application):
+
     def __init__(self):
         super().__init__()
 
@@ -38,11 +29,11 @@ class Application(Gtk.Application):
         self.gio_settings = Gio.Settings(schema_id=app.app_id)
         self.gtk_settings = Gtk.Settings().get_default()
         self.granite_settings = Granite.Settings.get_default()
+        self.utils = HelperUtils()
 
         self.window = None
         self.file = None
-        self.parser = None
-
+        self.inspeck_obj = None
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -60,40 +51,35 @@ class Application(Gtk.Application):
         if "io.elementary.stylesheet" not in self.gtk_settings.props.gtk_theme_name:
             self.gtk_settings.set_property("gtk-theme-name", "io.elementary.stylesheet.blueberry")
 
+        # set CSS provider
+        provider = Gtk.CssProvider()
+        provider.load_from_path(os.path.join(os.path.dirname(__file__), "data", "application.css"))
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
+        # prepend custom path for icon theme
+        icon_theme = Gtk.IconTheme.get_default()
+        icon_theme.prepend_search_path(os.path.join(os.path.dirname(__file__), "data", "icons"))        
 
     def do_activate(self):
-        # parser instance
-        if self.parser is None:
-            self.parser = parser()
-
-        # We only allow a single window and raise any existing ones
         if self.window is None:
-            # Windows are associated with the application 
-            # when the last one is closed the application shuts down
             self.window = InspektorWindow(application=self)
             self.add_window(self.window)
 
-            self.window.show_all()
-
-        if self.file is None:
-            self.file = self.filechooser() #GLocalFile object
-        else:
+        try:
             self.file = self.file[0] #GLocalFile object
-
-        if self.file:
-            self.file_path = self.file.get_path()
-
-            metadata = self.parser.get_jsondata(self.file_path)
-
-            self.window.load_metadata(self.file, metadata)
-            
-            self.window.show_all()
-        else:
-            self.quit()
+            self.do_initialize_inspeck_obj(self.file)
+        except:
+            self.window.stack.set_visible_child_name("drop-view")
+        finally:
+            self.window.do_show_window()
         
 
-        
+    def do_initialize_inspeck_obj(self, file):
+        self.inspeck_obj = FileInspeck(
+                                    giofile=file, 
+                                    metadata=self.utils.get_jsondata(self.file.get_path()), 
+                                    comments=self.utils.get_file_comments(self.file.get_path())
+                                    )
 
     def do_open(self, files, *hint):
         self.file = files
@@ -104,29 +90,6 @@ class Application(Gtk.Application):
         if self.window is not None:
             self.window.destroy()
 
-    def filechooser(self):
-        filechooserdialog = Gtk.FileChooserDialog()
-        filechooserdialog.add_button("_Open", Gtk.ResponseType.OK)
-        filechooserdialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
-        filechooserdialog.set_default_response(Gtk.ResponseType.OK)
-        filechooserdialog.set_transient_for(self.window)
-        filechooserdialog.set_destroy_with_parent(False)
-        filechooserdialog.set_position(Gtk.WindowPosition.MOUSE)
-        filechooserdialog.set_size_request(320, 480)
-        filechooserdialog.set_default_size(320, 480)
-        
-        response = filechooserdialog.run()
-        file = None
-        if response == Gtk.ResponseType.OK:
-            file = filechooserdialog.get_file() #return a GLocalFile object
-            filechooserdialog.destroy()
-        else:
-            filechooserdialog.destroy()
-            #self.window.destroy()
-        if file is not None:
-            return file
-
-
     def on_prefers_color_scheme(self, *args):
         prefers_color_scheme = self.granite_settings.get_prefers_color_scheme()
         self.gtk_settings.set_property("gtk-application-prefer-dark-theme", prefers_color_scheme)
@@ -134,4 +97,5 @@ class Application(Gtk.Application):
 
 def main(version):
     app = Application()
+    print(version)
     return app.run(sys.argv)
