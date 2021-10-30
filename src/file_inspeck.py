@@ -27,7 +27,7 @@ class FileInspeck:
     comments: str = ""
     preview_available: bool = False
     preview: Gtk.Image = Gtk.Image.new_from_icon_name("image-generic", Gtk.IconSize.DIALOG)
-    dimension: str = ""
+    dimension: Gtk.Label = Gtk.Label()
 
     def __post_init__(self):
         self.name = self.giofile.get_basename()
@@ -47,7 +47,7 @@ class FileInspeck:
         if "image" in type:
             self.preview_available = True
             self.preview = PreviewContainer(self.path, self.metadata['MIMEType'], None)
-            self.dimension = "Dimension:{0}".format(self.metadata['ImageSize'])
+            self.dimension.props.label = "Dimension: {0}".format(self.metadata['ImageSize'])
         elif "audio" in type:
             self.preview_available = True
 
@@ -60,7 +60,7 @@ class FileInspeck:
             player = Playaudio(self.giofile)
 
             self.preview = PreviewContainer(temp_cache_uri, self.metadata['MIMEType'], player)
-            self.dimension = "Duration:{0}".format(self.metadata['Duration'])
+            self.dimension.props.label = "Duration: {0}".format(self.metadata['Duration'])
 
         elif "video" in type:
             self.preview_available = True
@@ -68,13 +68,13 @@ class FileInspeck:
             player = Playvideo(self.giofile)
 
             self.preview = PreviewContainer(self.giofile.get_path(), self.metadata['MIMEType'], player, self.metadata['ImageWidth'], self.metadata['ImageHeight'])
-            self.dimension = "Dimension:{0} Duration:{1}".format(self.metadata['ImageSize'], self.metadata['Duration'])
+            self.dimension.props.label = "Dimension: {0} Duration: {1}".format(self.metadata['ImageSize'], self.metadata['Duration'])
 
         else:
-            self.dimension = "unavailable"
+            self.dimension.props.label = "unavailable"
 
     def set_fileicon(self):
-        size = 32
+        size = 24
         info = self.giofile.query_info('standard::icon' , 0 , Gio.Cancellable())
         for icon_name in info.get_icon().get_names():
             try:

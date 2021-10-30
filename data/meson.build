@@ -64,12 +64,11 @@ other_icon_sources = [
 iconsdir = join_paths(pkgdatadir, project_short_name, 'data', 'icons')
 install_data(other_icon_sources, install_dir: iconsdir)
 
-
-contract_file = i18n.merge_file(
-  input: 'com.github.hezral.inspektor.contract.in',
-  output: 'com.github.hezral.inspektor.contract',
-  type: 'desktop',
-  po_dir: '../po',
-  install: true,
-  install_dir: join_paths(get_option('datadir'), 'contractor')
-)
+# contract_file = i18n.merge_file(
+#   input: 'com.github.hezral.inspektor.contract.in',
+#   output: 'com.github.hezral.inspektor.contract',
+#   type: 'desktop',
+#   po_dir: '../po',
+#   install: true,
+#   install_dir: join_paths(get_option('datadir'), 'contractor')
+# )

@@ -16,8 +16,8 @@ class HelperUtils():
         run_executable = subprocess.Popen(['exiftool', '-j', file], stdout=subprocess.PIPE)
         stdout, stderr = run_executable.communicate()
         jsondata = json.loads(stdout)[0]
-        for key in jsondata:
-            print(key, ":", jsondata[key])
+        # for key in jsondata:
+        #     print(key, ":", jsondata[key])
         return jsondata
 
     def get_permission(self, file):

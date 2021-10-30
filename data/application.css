@@ -24,39 +24,12 @@
 @define-color shaded_base shade(@theme_base_color, 0.98);
 @define-color popup shade(@theme_base_color, 0.98);
 
-/* ------------------------------ */
-
-.stack-switcher-left {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 6px;
-    border-right-color: rgba(0,0,0,0.05);
-}
-
-.stack-switcher-right {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 6px;
-    border-left-color: rgba(0,0,0,0.05);
-}
-
-.stack-switcher {
-    border-top-color: rgba(0,0,0,0.1);
-    border-bottom-color: rgba(0,0,0,0);
-    border-left-color: rgba(0,0,0,0);
-    border-right-color: rgba(0,0,0,0);
-    color: alpha(@theme_text_color, 0.6);
-}
-
-.stack-switcher:checked {
-    font-weight: bold;
-    color: alpha(@theme_text_color, 1);
-}
-
 
 scrolledwindow > undershoot.top {
     background-blend-mode: normal;
     background-clip: border-box;
     background-color: rgba(0,0,0,0);
-    background-image: linear-gradient(@theme_base_color 0, alpha(@theme_base_color, 0) 50%);
+    background-image: linear-gradient(@theme_bg_color 0, alpha(@theme_bg_color, 0) 50%);
     background-origin: padding-box;
     background-position: left top;
     background-repeat: repeat;
@@ -67,7 +40,7 @@ scrolledwindow > undershoot.bottom {
     background-blend-mode: normal;
     background-clip: border-box;
     background-color: rgba(0,0,0,0);
-    background-image: linear-gradient(alpha(@theme_base_color, 0) 50%, @theme_base_color 100%);
+    background-image: linear-gradient(alpha(@theme_bg_color, 0) 50%, @theme_bg_color 100%);
     background-origin: padding-box;
     background-position: left top;
     background-repeat: repeat;
@@ -140,16 +113,9 @@ expander > * {
 }
 
 .play-pause-shadow {
-    /* box-shadow: 0 0 0 1px rgba(0,0,0,0.75), 0 13px 16px 4px rgba(0,0,0,0), 0 2px 4px 2px rgba(0,0,0,0.2), 0 15px 12px -10px rgba(0,0,0,0.5), 0 8px 14px 4px rgba(0,0,0,0.25); */
     background-color: rgba(0,0,0,0.25);
-    /* padding: 10px; */
     border-radius: 16px;
-
 }
-
-/* .play-pause-shadow-overlay {
-    box-shadow: 0 -1px rgba(255,255,255,0.04) inset, 0 1px rgba(255,255,255,0.06) inset, 1px 0 rgba(255,255,255,0.014) inset, -1px 0 rgba(255,255,255,0.014) inset;
-} */
 
 .icon-dropshadow {
     -gtk-icon-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.7);
@@ -160,4 +126,6 @@ expander > * {
     border-radius: 3px;
     padding-left: 6px;
     padding-right: 6px;
+    padding-top: 1px;
+    padding-bottom: 1px;
 }

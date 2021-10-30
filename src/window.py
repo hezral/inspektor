@@ -30,14 +30,12 @@ class InspektorWindow(Handy.ApplicationWindow):
 
         self.app = self.props.application
         
-        self.set_keep_above(True)
         self.props.title = app.app_name
-
         self.props.halign = Gtk.Align.FILL
         self.props.valign = Gtk.Align.START
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
         self.set_default_size(400, 320)
-        # self.set_size_request(400, -1)
+        self.set_size_request(400, -1)
 
         geometry = Gdk.Geometry()
         setattr(geometry, 'max_height', 800)
@@ -62,17 +60,9 @@ class InspektorWindow(Handy.ApplicationWindow):
 
         self.add(self.layout)
         self.show_all()
-        # self.connect("grab_notify", self.on_configure_event)
         self.connect("delete-event", self.on_close_window)
 
-    def on_configure_event(self, widget, was_grabbed):
-        print(locals())
-
     def generate_headerbar(self):
-        self.export_button = Gtk.Button(image=Gtk.Image.new_from_icon_name("document-export", Gtk.IconSize.LARGE_TOOLBAR))
-        self.export_button.set_always_show_image(True)
-        # self.export_button.connect('clicked', self.on_export)
-
         self.headerbar = Handy.HeaderBar()
         self.headerbar.set_size_request(-1, 44)
         self.headerbar.props.hexpand = True
@@ -80,29 +70,37 @@ class InspektorWindow(Handy.ApplicationWindow):
         self.headerbar.props.show_close_button = True
         self.headerbar.props.decoration_layout = "close:"
         self.headerbar.props.title = "Inspektor"
-
         return self.headerbar
 
     def do_show_window(self):
         if self.app.file:
-            self.headerbar.pack_start(self.app.inspeck_obj.icon)
-            self.headerbar.pack_start(self.app.inspeck_obj.name_label)
-            self.headerbar.pack_end(self.export_button)
-            self.headerbar.props.title = ""
-            self.stack.set_visible_child_name("base-view")
             self.load_metadata()
-            
         self.show_all()
 
     def load_metadata(self):
 
+       #clear previous data if the app is invoked while an existing window is open. need to figure out how to do multiple instance
+        for child in self.base_view.base_grid.get_children():
+            self.base_view.base_grid.remove(child)
+        for child in self.base_view.extended_grid.get_children():
+            self.base_view.extended_grid.remove(child)
+        for child in self.base_view.preview_grid.get_children():
+            self.base_view.preview_grid.remove(child)
+        for child in self.headerbar.get_children():
+            self.headerbar.remove(child)
+
+        self.headerbar.pack_start(self.app.inspeck_obj.icon)
+        self.headerbar.pack_start(self.app.inspeck_obj.name_label)
+        # self.headerbar.pack_end(self.export_button)
+        self.headerbar.props.title = ""
+        self.stack.set_visible_child_name("base-view")
+
         self.base_view.file_comments.set_text(self.app.inspeck_obj.comments)
 
-        # if "image" in self.app.inspeck_obj.metadata['MIMEType']:
         if self.app.inspeck_obj.preview_available is True:
             self.base_view.preview_grid.attach(self.app.inspeck_obj.preview, 0, 0, 1, 1)
-        
-        self.base_view.dimension.props.label = self.app.inspeck_obj.dimension
+
+        self.base_view.preview_grid.attach(self.app.inspeck_obj.dimension, 0, 1, 1, 1)
 
         # add error checking if exiftool doesn't support a file format
         dict = self.app.inspeck_obj.metadata
@@ -114,9 +112,8 @@ class InspektorWindow(Handy.ApplicationWindow):
                 self.base_view.base_grid.attach(label, 0, i, 1, 1)
                 i = i + 1
 
-            # self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
-            # label = DataLabel('Error', 'Unsupported file format. No metadata info to show')
-            # self.extended_data_grid.attach(label, 0, 1, 1, 1)
+            label = DataLabel('Error', 'Unsupported file format', self.app)
+            self.base_view.extended_grid.attach(label, 0, 0, 1, 1)
                     
         else:
             self.basedata = data().basedata
@@ -126,15 +123,20 @@ class InspektorWindow(Handy.ApplicationWindow):
                 self.base_view.base_grid.attach(label, 0, i, 1, 1)
                 i = i + 1
 
-            # i = 1
-            # for key in sorted (dict.keys()):
-            #     if len(dict.keys()) < 15:
-            #         self.extended_scrolledview.props.shadow_type = Gtk.ShadowType(0)
+            base_keys = []
+            for item in self.basedata:
+                base_keys.append(item[0])
 
-            #     if key not in self.basedata:
-            #         label = DataLabel(key, str(dict[key]))
-            #         self.extended_data_grid.attach(label, 0, i, 1, 1)
-            #         i = i + 1
+            i = 1
+            for key in sorted (dict.keys()):
+                if "FileType" not in key or "ExifToolVersion" not in key:
+                    if key not in base_keys:
+                        label = DataLabel(key, str(dict[key]), self.app)
+                        self.base_view.extended_grid.attach(label, 0, i, 1, 1)
+                        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+                        separator.props.expand = True
+                        self.base_view.extended_grid.attach(separator, 0, i+1, 1, 1)
+                        i = i + 2
 
         # present the window again in case its behind any window. usually if invoked from contractor menu
         self.base_view.on_view_visible()
@@ -148,26 +150,3 @@ class InspektorWindow(Handy.ApplicationWindow):
                     self.app.inspeck_obj.preview.play_gif_thread.join()
                     self.app.inspeck_obj.preview.play_gif_thread = None
         self.destroy()
-
-
-# class DataLabel(Gtk.Label):
-#     def __init__(self, title, value):
-#         super().__init__()
-#         self.props.halign = Gtk.Align.START
-#         self.props.valign = Gtk.Align.START
-#         self.props.wrap = True
-#         self.props.selectable = True
-#         self.props.max_width_chars = 48
-#         self.props.ellipsize = Pango.EllipsizeMode.END
-#         label = title + ': ' + value
-#         self.set_label(label)
-#         if len(label) > 50:
-#             self.set_tooltip_text(label)
-
-#     def generate_copy_to_clipboard(self):
-#         copy_button = Gtk.Button(label="Copy", image=Gtk.Image().new_from_icon_name("edit-copy-symbolic", Gtk.IconSize.SMALL_TOOLBAR))
-#         copy_button.connect("clicked", self.)
-
-#         self.copy_revealer = Gtk.Revealer()
-#         self.copy_revealer.add(copy_button)
-#         self.copy_revealer.props.transition_type = Gtk.RevealerTransitionType.CROSSFADE

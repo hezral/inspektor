@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Inspektor
-Exec=com.github.hezral.inspektor
+Exec=com.github.hezral.inspektor %f
 Icon=com.github.hezral.inspektor
 Terminal=false
 Type=Application
