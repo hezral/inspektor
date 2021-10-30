@@ -1,0 +1,131 @@
+/*
+# Copyright 2020 Adi Hezral (hezral@gmail.com) (https://github.com/hezral)
+#
+# This file is part of QuickWord ("Application").
+#
+# The Application is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# The Application is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this Application.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* -- colors -- */
+/* ------------------------------ */
+@define-color shaded_dark shade(@theme_base_color, 0.95);
+@define-color shaded_darker shade(@theme_base_color, 0.85);
+@define-color shaded_base shade(@theme_base_color, 0.98);
+@define-color popup shade(@theme_base_color, 0.98);
+
+
+scrolledwindow > undershoot.top {
+    background-blend-mode: normal;
+    background-clip: border-box;
+    background-color: rgba(0,0,0,0);
+    background-image: linear-gradient(@theme_bg_color 0, alpha(@theme_bg_color, 0) 50%);
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: repeat;
+    background-size: auto;
+}
+
+scrolledwindow > undershoot.bottom {
+    background-blend-mode: normal;
+    background-clip: border-box;
+    background-color: rgba(0,0,0,0);
+    background-image: linear-gradient(alpha(@theme_bg_color, 0) 50%, @theme_bg_color 100%);
+    background-origin: padding-box;
+    background-position: left top;
+    background-repeat: repeat;
+    background-size: auto;
+}
+
+expander arrow {
+    padding-right: 4px;
+}
+
+textview {
+    border-radius: 3px;
+    padding: 6px;
+}
+
+scrolledwindow {
+    border-radius: 3px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.3);
+    border-width: 1px;
+    background-clip: padding-box;
+    box-shadow: 0 1px rgba(255,255,255,0.06), 0 1px 1px rgba(0,0,0,0.5) inset, 0 0 1px 1px rgba(0,0,0,0.05) inset;
+}
+
+label#drop {
+    font-size: 125%;
+    font-weight: bold;
+    color: alpha(@theme_text_color, 0.5);
+}
+
+@keyframes crossfader {
+    0% { opacity: 0; } 
+    03.33% { opacity: 0; }
+    06.66% { opacity: 0; }
+    09.99% { opacity: 0; }
+    13.33% { opacity: 0; }
+    16.65% { opacity: 0.75; }
+    100% { opacity: 1; }	
+}
+
+
+expander > * {
+    animation: crossfader 0.5s ease-in-out forwards;
+}
+
+.checkerboard {
+    background-image:
+      linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%), 
+      linear-gradient(135deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.1) 75%),
+      linear-gradient(135deg, transparent 75%, rgba(0,0,0,0.1) 75%);
+    background-size:24px 24px; /* Must be a square */
+    background-position:0 0, 12px 0, 12px -12px, 0px 12px; /* Must be half of one side of the square */
+}
+
+.dropshadow {
+    /* border-radius: 5px; */
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0,0,0,0.1);
+    background-color: transparent;
+    animation: crossfader 0.25s ease-in-out forwards;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 13px 16px 4px rgba(0,0,0,0), 0 3px 4px rgba(0,0,0,0.25), 0 3px 3px -3px rgba(0,0,0,0.45);
+}
+
+@keyframes pulsing {
+    25% {opacity: 0.25;}
+    75% {opacity: 0.75;}
+    100% {opacity: 1.00;}
+}
+
+.play-pause-shadow {
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 16px;
+}
+
+.icon-dropshadow {
+    -gtk-icon-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.copied-widget {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}

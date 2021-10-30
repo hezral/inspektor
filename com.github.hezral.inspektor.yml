@@ -1,0 +1,360 @@
+app-id: com.github.hezral.inspektor
+runtime: io.elementary.Platform
+runtime-version: '6'
+sdk: io.elementary.Sdk
+command: com.github.hezral.inspektor
+appstream-compose: false
+finish-args:
+  - --device=all
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=network
+  - --socket=pulseaudio
+  # talk to dbus session
+  - --socket=session-bus
+  # needed for perfers-color-scheme
+  - --system-talk-name=org.freedesktop.Accounts
+  # access home diectory
+  - --filesystem=home
+  # read-only for host
+  - --filesystem=host:ro
+  - --filesystem=xdg-videos
+  - --env=GST_VAAPI_ALL_DRIVERS=1
+  - --env=LIBVA_DRIVER_NAME=iHD
+build-options:
+  env:
+    GST_PLUGIN_SYSTEM_PATH: /app/lib/gstreamer-1.0/
+modules:
+
+  - name: exiftool
+    modules:
+      - name: exiftool
+        buildsystem: simple
+        build-commands:
+          - perl Makefile.PL
+          - make install
+        cleanup:
+          - '*.pod'
+        sources:
+          - type: git
+            url: https://github.com/exiftool/exiftool.git
+            tag: '12.30'
+            commit: 57f44297961839f40e70d682865c41828b7f71b5
+        modules:
+          - name: perl
+            buildsystem: simple
+            build-commands:
+              - ./Configure -des -Dprefix=$FLATPAK_DEST -Dman1dir=none -Dman3dir=none
+              - make
+              - make install
+            post-install:
+              # Fix wrong permissions
+              - chmod -R u+w $FLATPAK_DEST/lib/perl5
+            cleanup:
+              - /bin/corelist
+              - /bin/cpan
+              - /bin/enc2xs
+              - /bin/encguess
+              - /bin/h2ph
+              - /bin/h2xs
+              - /bin/instmodsh
+              - /bin/json_pp
+              - /bin/libnetcfg
+              - /bin/perl5*
+              - /bin/perlbug
+              - /bin/perldoc
+              - /bin/perlivp
+              - /bin/perlthanks
+              - /bin/piconv
+              - /bin/pl2pm
+              - /bin/pod2html
+              - /bin/pod2man
+              - /bin/pod2text
+              - /bin/pod2usage
+              - /bin/podchecker
+              - /bin/prove
+              - /bin/ptar
+              - /bin/ptardiff
+              - /bin/ptargrep
+              - /bin/shasum
+              - /bin/splain
+              - /bin/streamzip
+              - /bin/xsubpp
+              - /bin/zipdetails
+              - '*.pod'
+            sources:
+              - type: git
+                url: https://github.com/Perl/perl5.git
+                tag: v5.34.0
+                commit: 79a7b254d85a10b65126ad99bf10e70480569d68
+
+  - name: attr
+    sources:
+      - type: git
+        url: https://git.savannah.nongnu.org/git/attr.git
+
+  - name: media-thumbnailer
+    modules:
+      - name: pydub
+        buildsystem: simple
+        build-options:
+          build-args:
+            - --share=network
+        build-commands:
+          - "pip3 install --prefix=${FLATPAK_DEST} pydub"
+          
+      - name: matplotlib
+        buildsystem: simple
+        build-options:
+          build-args:
+            - --share=network
+        build-commands:
+          - "pip3 install --prefix=${FLATPAK_DEST} matplotlib"
+
+      - name: pillow
+        buildsystem: simple
+        build-options:
+          build-args:
+            - --share=network
+        build-commands:
+          - "pip3 install --prefix=${FLATPAK_DEST} pillow"
+    
+      - name: ffmpeg-python
+        buildsystem: simple
+        build-options:
+          build-args:
+            - --share=network
+        build-commands:
+          - "pip3 install --prefix=${FLATPAK_DEST} ffmpeg-python"
+
+  - name: media-previewer
+    modules:
+      - name: x264
+        config-opts:
+          - --enable-shared
+          - --system-libx264
+          - --enable-pic
+          - --disable-lavf
+        sources:
+          - type: archive
+            url: http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20191103-2245-stable.tar.bz2
+            sha256: d74f8f819104a94b0bd075aae39652b1957bcdd460e09b5202582c86e95a5bc0
+
+      - name: gudev
+        buildsystem: meson
+        builddir: true
+        config-opts:
+          - -Dtests=disabled
+          - -Dintrospection=disabled
+        sources:
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/libgudev.git
+
+      - name: gstreamer
+        buildsystem: meson
+        builddir: true
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.18.4.tar.xz
+          sha256: 9aeec99b38e310817012aa2d1d76573b787af47f8a725a65b833880a094dfbc5
+        config-opts:
+          - -Dexamples=disabled
+          - -Dbenchmarks=disabled
+          - -Dlibunwind=enabled
+          - -Dlibdw=enabled
+          - -Ddbghelp=disabled
+          - -Dbash-completion=disabled
+          - -Dgtk_doc=disabled
+          - -Ddoc=disabled
+
+      - name: gst-plugins-base
+        buildsystem: meson
+        builddir: true
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.18.4.tar.xz
+          sha256: 29e53229a84d01d722f6f6db13087231cdf6113dd85c25746b9b58c3d68e8323
+        config-opts:
+          - -Dwrap_mode=nofallback
+          - -Dcdparanoia=disabled
+          - -Dtremor=disabled
+          - -Dexamples=disabled
+          - -Dgtk_doc=disabled
+          - -Ddoc=disabled
+          - -Dtests=disabled
+
+      - name: gst-plugins-good
+        buildsystem: meson
+        builddir: true
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.18.4.tar.xz
+          sha256: b6e50e3a9bbcd56ee6ec71c33aa8332cc9c926b0c1fae995aac8b3040ebe39b0
+        config-opts:
+          - -Daalib=disabled
+          - -Ddoc=disabled
+          - -Dlibcaca=disabled
+          - -Ddv=disabled
+          - -Ddv1394=disabled
+          - -Drpicamsrc=disabled
+          - -Dshout2=disabled
+          - -Dtwolame=disabled
+          - -Dv4l2-gudev=disabled
+
+      - name: gst-plugins-bad
+        buildsystem: meson
+        builddir: true
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.18.4.tar.xz
+          sha256: 74e806bc5595b18c70e9ca93571e27e79dfb808e5d2e7967afa952b52e99c85f
+        config-opts:
+          - -Dexamples=disabled
+          - -Daom=disabled
+          - -Davtp=disabled
+          - -Dbs2b=disabled
+          - -Dchromaprint=disabled
+          - -Dcolormanagement=disabled
+          - -Dcuda=disabled
+          - -Dcurl-ssh2=disabled
+          - -Dcurl=disabled
+          - -Dd3dvideosink=disabled
+          - -Ddash=disabled
+          - -Ddc1394=disabled
+          - -Ddecklink=disabled
+          - -Ddirectfb=disabled
+          - -Ddirectsound=disabled
+          - -Ddoc=disabled
+          - -Ddtls=disabled
+          - -Ddts=disabled
+          - -Dfaac=disabled
+          - -Dfbdev=disabled
+          - -Dfestival=disabled
+          - -Dflite=disabled
+          - -Dfluidsynth=disabled
+          - -Dgme=disabled
+          - -Dgsm=disabled
+          - -Diqa=disabled
+          - -Dladspa=disabled
+          - -Dlibde265=disabled
+          - -Dlibmms=disabled
+          - -Dlv2=disabled
+          - -Dmagicleap=disabled
+          - -Dmicrodns=disabled
+          - -Dmodplug=disabled
+          - -Dmpeg2enc=disabled
+          - -Dmplex=disabled
+          - -Dmsdk=disabled
+          - -Dmusepack=disabled
+          - -Dneon=disabled
+          - -Dnvcodec=disabled
+          - -Dnvdec=disabled
+          - -Dnvenc=disabled
+          - -Dofa=disabled
+          - -Dopenal=disabled
+          - -Dopencv=disabled
+          - -Dopenexr=disabled
+          - -Dopenh264=disabled
+          - -Dopenmpt=disabled
+          - -Dopenni2=disabled
+          - -Dopensles=disabled
+          - -Dresindvd=disabled
+          - -Drsvg=disabled
+          - -Drtmp=disabled
+          - -Drtp=disabled
+          - -Dsbc=disabled
+          - -Dsctp=disabled
+          - -Dsndfile=disabled
+          - -Dsoundtouch=disabled
+          - -Dspandsp=disabled
+          - -Dsrt=disabled
+          - -Dsvthevcenc=disabled
+          - -Dteletext=disabled
+          - -Dtinyalsa=disabled
+          - -Dva=disabled
+          - -Dvaacenc=disabled
+          - -Dvdpau=disabled
+          - -Dvoaacenc=disabled
+          - -Dvoamrwbenc=disabled
+          - -Dvulkan=disabled
+          - -Dwasapi=disabled
+          - -Dwasapi2=disabled
+          - -Dwebp=disabled
+          - -Dwebrtcdsp=disabled
+          - -Dwebrtc=disabled
+          - -Dwildmidi=disabled
+          - -Dwinks=disabled
+          - -Dwinscreencap=disabled
+          - -Dwpe=disabled
+          - -Dzbar=disabled
+          - -Dzxing=disabled
+
+      - name: ffmpeg
+        builddir: true
+        sources:
+          - type: git
+            url: https://git.ffmpeg.org/ffmpeg.git
+            tag: n4.3.1
+            commit: 6b6b9e593dd4d3aaf75f48d40a13ef03bdef9fdb
+        config-opts:
+          - --prefix="/app/"
+          - --libdir="/app/lib"
+          - --disable-doc
+          - --disable-static
+          - --enable-optimizations
+          - --enable-shared
+          # - --disable-everything
+          # - --disable-ffplay
+          # - --disable-ffprobe
+          - --enable-gnutls
+          - --enable-libaom
+          - --enable-libdav1d
+          - --enable-libfdk-aac
+          - --enable-libmp3lame
+          - --enable-libfontconfig
+          - --enable-libfreetype
+          - --enable-libopenh264
+          - --enable-libopus
+          - --enable-libpulse
+          - --enable-libspeex
+          - --enable-libtheora
+          - --enable-libvorbis
+          - --enable-libvpx
+          - --enable-libwebp
+          - --enable-openal
+          - --enable-opengl
+          - --enable-sdl2
+          - --enable-decoder=ac3,alac,flac,g723_1,g729,libfdk_aac,libopus,mp2,mp3,m4a,pcm_alaw,pcm_mulaw,pcm_f32le,pcm_s16be,pcm_s24be,pcm_s16le,pcm_s24le,pcm_s32le,pcm_u8,tta,vorbis,wavpack
+          - --enable-decoder=ass,ffv1,libaom_av1,libdav1d,libopenh264,libvpx_vp8,libvpx_vp9,rawvideo,theora,vp8,vp9,flv,hevc,h263,h264,mpeg2video,mpeg4,msmpeg4,msmpeg4v1,msmpeg4v2,msmpeg4v3,vp6,vp6a,vp6f
+          - --enable-decoder=gif,png,tiff,webp
+          - --enable-parser=aac,ac3,flac,mpegaudio,mpeg4video,opus,vp3,vp8,vorbis,hevc,h264
+          - --enable-demuxer=aac,ac3,ass,flac,gif,matroska,mov,mp3,mpegvideo,ogg,wav
+          - --enable-filter=crop,scale
+          - --enable-protocol=file 
+
+      - name: gst-libav
+        builddir: true
+        buildsystem: meson
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.18.4.tar.xz
+          sha256: 344a463badca216c2cef6ee36f9510c190862bdee48dc4591c0a430df7e8c396
+        config-opts:
+        - -Ddoc=disabled
+
+      - name: gstreamer-vaapi
+        buildsystem: meson
+        builddir: true
+        sources:
+        - type: archive
+          url: https://gstreamer.freedesktop.org/src/gstreamer-vaapi/gstreamer-vaapi-1.18.4.tar.xz
+          sha256: 92db98af86f3150d429c9ab17e88d2364f9c07a140c8f445ed739e8f10252aea
+        config-opts:
+        - -Ddoc=disabled
+
+  - name: inspektor
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
