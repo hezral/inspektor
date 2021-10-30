@@ -57,18 +57,3 @@ foreach i : icon_sizes
         install_dir: join_paths(get_option ('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps')
     )
 endforeach
-
-other_icon_sources = [
-  join_paths('icons', 'settings-symbolic.svg'),
-]
-iconsdir = join_paths(pkgdatadir, project_short_name, 'data', 'icons')
-install_data(other_icon_sources, install_dir: iconsdir)
-
-# contract_file = i18n.merge_file(
-#   input: 'com.github.hezral.inspektor.contract.in',
-#   output: 'com.github.hezral.inspektor.contract',
-#   type: 'desktop',
-#   po_dir: '../po',
-#   install: true,
-#   install_dir: join_paths(get_option('datadir'), 'contractor')
-# )

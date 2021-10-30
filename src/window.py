@@ -11,11 +11,8 @@ gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Handy, Gio, Pango, Granite, Gdk, GdkPixbuf
 from .constants import data, app
-from .about import AboutInspektor
 from .drop_view import DropView
 from .base_view import BaseView, DataLabel
-from .extended_view import ExtendedView
-from .mode_switch import ModeSwitch
 
 class InspektorWindow(Handy.ApplicationWindow):
     __gtype_name__ = 'InspektorWindow'

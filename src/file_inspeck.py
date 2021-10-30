@@ -47,7 +47,10 @@ class FileInspeck:
         if "image" in type:
             self.preview_available = True
             self.preview = PreviewContainer(self.path, self.metadata['MIMEType'], None)
-            self.dimension.props.label = "Dimension: {0}".format(self.metadata['ImageSize'])
+            if "svg" in type:
+                self.dimension.props.label = "Dimension: {0}x{1}".format(self.metadata['SvgWidth'],self.metadata['SvgHeight'])
+            else:
+                self.dimension.props.label = "Dimension: {0}".format(self.metadata['ImageSize'])
         elif "audio" in type:
             self.preview_available = True
 
