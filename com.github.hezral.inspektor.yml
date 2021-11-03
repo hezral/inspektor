@@ -7,9 +7,7 @@ finish-args:
   - --socket=wayland
   - --socket=fallback-x11
   - --socket=pulseaudio
-  # needed for perfers-color-scheme
-  - --system-talk-name=org.freedesktop.Accounts
-  # access home diectory
+  # access home diectory for inspecting files
   - --filesystem=home
   # for gstreamer
   # - --env=GST_VAAPI_ALL_DRIVERS=1
