@@ -4,8 +4,8 @@
   <id>com.github.hezral.inspektor</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
-  <name>Clips</name>
-  <summary>Clipboard Manager</summary>
+  <name>Inspektor</name>
+  <summary>Metadata viewer</summary>
   <developer_name>Adi Hezral</developer_name>
   <description>
     <p>View and export your files metadata easily. This is a GUI for ExifTool and Setfattr/Getfattr. Credits goes to each owner of the tools.</p>
@@ -33,8 +33,16 @@
           <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-02.png?raw=true</image>
       </screenshot>
       <screenshot>
-          <caption>Export file information to JSON, CSV or Text file format</caption>
+          <caption>Preview images, videos and audio files</caption>
           <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-03.png?raw=true</image>
+      </screenshot>
+      <screenshot>
+          <caption>Export file information to JSON, CSV or Text file format</caption>
+          <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-04.png?raw=true</image>
+      </screenshot>
+      <screenshot>
+          <caption>Copy lines to clipboard</caption>
+          <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-05.png?raw=true</image>
       </screenshot>
   </screenshots>
 
@@ -60,7 +68,7 @@
     <content_attribute id="language-humor">none</content_attribute>
     <content_attribute id="language-discrimination">none</content_attribute>
     <content_attribute id="social-chat">none</content_attribute>
-    <content_attribute id="social-info">none</content_attribute>
+    <content_attribute id="social-info">mild</content_attribute>
     <content_attribute id="social-audio">none</content_attribute>
     <content_attribute id="social-location">none</content_attribute>
     <content_attribute id="social-contacts">none</content_attribute>
@@ -69,21 +77,21 @@
   </content_rating>
 
   <releases>
-    <release version="2.0.0" date="2021-10-30">
+    <release version="1.0.5" date="2021-10-26">
       <description>
-        <p>First release as flatpak</p>
-        <p>Re-designed UI and complete rewrite</p>
-        <p>Preview images, video, audio files</p>
-        <p>Click on info text and copy to clipboard automatically</p>
-        <p>Inspeck files with file manager's Open With menu</p>
+        <p>*New* Run/Trigger shortcut keys will show/hide Inspektor depending if its visible or not</p>
+        <p>*New* Hover on Inspektor total to see tooltip of total clip types</p>
+        <p>*Improved* Html clip types causing performance and resource issues</p>
+        <p>*Fixed* Search-as-you-type behaviour</p>
+        <p>*Fixed* App source icon error if app is not installed</p>
       </description>
     </release>
   </releases>
 
   <custom>
-    <value key="x-appcenter-color-primary">#B7E1E5</value>
-    <value key="x-appcenter-color-primary-text">#29484F</value>
-    <value key="x-appcenter-suggested-price">1.00</value>
+    <value key="x-appcenter-color-primary">#7D30E8</value>
+    <value key="x-appcenter-color-primary-text">#FFFFFF</value>
+    <value key="x-appcenter-suggested-price">10.00</value>
     <value key="x-appcenter-stripe">pk_live_51J03F1AXT8Az6AYFEiPc5mgpv7vUSWDnw135TmPT4tUbB2CJLwG19e3NxEuC7Zbz3VkXg7BygUQOTf7x6UDhSAn8005gq9ywZy</value>
   </custom>
 
