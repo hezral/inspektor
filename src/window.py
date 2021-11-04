@@ -30,6 +30,7 @@ class InspektorWindow(Handy.ApplicationWindow):
         self.props.title = app.app_name
         self.props.halign = Gtk.Align.FILL
         self.props.valign = Gtk.Align.START
+        self.props.resizable = False
         self.props.window_position = Gtk.WindowPosition.CENTER_ON_PARENT
         self.set_default_size(400, 320)
         self.set_size_request(400, -1)
