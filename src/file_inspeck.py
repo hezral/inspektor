@@ -2,16 +2,16 @@
 # SPDX-FileCopyrightText: 2021 Adi Hezral <hezral@gmail.com>
 
 from dataclasses import dataclass, field
+from subprocess import call
 
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GdkPixbuf, Gtk, Gio, Gdk, GLib, Pango
 
-from .waveform import Waveform
 import tempfile
 
-from .playaudio import Playaudio
-from .playvideo import Playvideo
+from .utils import HelperUtils
+
 import os
 
 @dataclass
@@ -43,7 +43,10 @@ class FileInspeck:
         
         self.set_fileicon()
 
+        utils = HelperUtils()
+
         type = self.metadata['MIMEType']
+
         if "image" in type:
             self.preview_available = True
             self.preview = PreviewContainer(self.path, self.metadata['MIMEType'], None)
@@ -51,26 +54,33 @@ class FileInspeck:
                 self.dimension.props.label = "Dimension: {0}x{1}".format(self.metadata['SvgWidth'],self.metadata['SvgHeight'])
             else:
                 self.dimension.props.label = "Dimension: {0}".format(self.metadata['ImageSize'])
+
         elif "audio" in type:
             self.preview_available = True
 
             temp_filename = next(tempfile._get_candidate_names()) + tempfile.gettempprefix()
             temp_cache_uri = os.path.join(GLib.get_user_cache_dir(), temp_filename)
 
-            waveform = Waveform(self.path)
-            waveform.save(temp_cache_uri)
-            
-            player = Playaudio(self.giofile)
+            audio_art = utils.get_audio_art(infile=self.path, outfile=temp_cache_uri)
+            if audio_art is None:
+                audio_icon = Gtk.IconTheme.get_default().lookup_icon("audio-x-generic", 128, 0)
+                audio_art = audio_icon.get_filename()
 
-            self.preview = PreviewContainer(temp_cache_uri, self.metadata['MIMEType'], player)
+            self.preview = PreviewContainer(audio_art, self.metadata['MIMEType'], (utils.open_file_with_default_app, self.path))
             self.dimension.props.label = "Duration: {0}".format(self.metadata['Duration'])
 
         elif "video" in type:
             self.preview_available = True
 
-            player = Playvideo(self.giofile)
+            temp_filename = next(tempfile._get_candidate_names()) + tempfile.gettempprefix()
+            temp_cache_uri = os.path.join(GLib.get_user_cache_dir(), temp_filename)
 
-            self.preview = PreviewContainer(self.giofile.get_path(), self.metadata['MIMEType'], player, self.metadata['ImageWidth'], self.metadata['ImageHeight'])
+            video_frame = utils.get_video_frame(infile=self.path, outfile=temp_cache_uri)
+            if video_frame is None:
+                video_icon = Gtk.IconTheme.get_default().lookup_icon("video-x-generic", 128, 0)
+                video_frame = video_icon.get_filename()
+
+            self.preview = PreviewContainer(video_frame, self.metadata['MIMEType'], (utils.open_file_with_default_app, self.path), self.metadata['ImageWidth'], self.metadata['ImageHeight'])
             self.dimension.props.label = "Dimension: {0} Duration: {1}".format(self.metadata['ImageSize'], self.metadata['Duration'])
 
         else:
@@ -93,65 +103,53 @@ class PreviewContainer(Gtk.Grid):
     play_gif_thread = None
     alpha = False
 
-    def __init__(self, filepath, type, previewer, width=None, height=None, *args, **kwargs):
+    def __init__(self, filepath, type, callback=None, width=None, height=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.props.halign = self.props.valign = Gtk.Align.FILL
         self.props.expand = True
         self.type = type
         self.filepath = filepath
-        self.previewer = previewer
+        if callback is not None:
+            self.callback = callback[0]
+            self.callback_data = callback[1]
 
         self.get_style_context().add_class("dropshadow")
 
-        if "image" in self.type or "audio" in self.type:
-            if "gif" in self.type:
-                self.pixbuf_original = GdkPixbuf.PixbufAnimation.new_from_file(filepath)
-                self.pixbuf_original_height = self.pixbuf_original.get_height()
-                self.pixbuf_original_width = self.pixbuf_original.get_width()
-                self.iter = self.pixbuf_original.get_iter()
-                if self.iter.get_pixbuf().get_has_alpha():
-                    self.alpha = True
-            else:
-                self.pixbuf_original = GdkPixbuf.Pixbuf.new_from_file(filepath)
-                self.pixbuf_original_height = self.pixbuf_original.props.height
-                self.pixbuf_original_width = self.pixbuf_original.props.width
-                if self.pixbuf_original.get_has_alpha():
-                    self.alpha = True
+        if "gif" in self.type:
+            self.pixbuf_original = GdkPixbuf.PixbufAnimation.new_from_file(filepath)
+            self.pixbuf_original_height = self.pixbuf_original.get_height()
+            self.pixbuf_original_width = self.pixbuf_original.get_width()
+            self.iter = self.pixbuf_original.get_iter()
+            if self.iter.get_pixbuf().get_has_alpha():
+                self.alpha = True
+        else:
+            self.pixbuf_original = GdkPixbuf.Pixbuf.new_from_file(filepath)
+            self.pixbuf_original_height = self.pixbuf_original.props.height
+            self.pixbuf_original_width = self.pixbuf_original.props.width
+            if self.pixbuf_original.get_has_alpha():
+                self.alpha = True
 
-            if self.alpha and "image" in self.type:
-                self.get_style_context().add_class("checkerboard")
+        if self.alpha and "image" in self.type:
+            self.get_style_context().add_class("checkerboard")
 
-            self.ratio_h_w = self.pixbuf_original_height / self.pixbuf_original_width
-            self.ratio_w_h = self.pixbuf_original_width / self.pixbuf_original_height
+        self.ratio_h_w = self.pixbuf_original_height / self.pixbuf_original_width
+        self.ratio_w_h = self.pixbuf_original_width / self.pixbuf_original_height
 
+        if "generic" not in self.filepath:
             preview_width = 256
             preview_height = preview_width * self.ratio_h_w
-            self.set_size_request(preview_width, preview_height)
+        else:
+            preview_width = self.pixbuf_original_width
+            preview_height = self.pixbuf_original_height
+        self.set_size_request(preview_width, preview_height)
 
-            drawing_area = Gtk.DrawingArea()
-            drawing_area.props.expand = True
-            drawing_area.connect("draw", self.draw)
-            drawing_area.props.can_focus = False
+        drawing_area = Gtk.DrawingArea()
+        drawing_area.props.expand = True
+        drawing_area.connect("draw", self.draw)
+        drawing_area.props.can_focus = False
 
-            preview_box = drawing_area
-
-        elif "video" in self.type:
-            self.box = Gtk.Box()
-            self.box.props.expand = True
-            self.box.props.halign = Gtk.Align.FILL
-            self.box.props.valign = Gtk.Align.FILL
-
-            preview_box = self.box
-
-            self.ratio_h_w = height / width
-
-            preview_width = 256
-            preview_height = preview_width * self.ratio_h_w
-            self.set_size_request(preview_width, preview_height)
-
-            self.previewer.set_parent_widget(preview_box)
-            # self.previewer.on_realize(preview_box)
+        preview_box = drawing_area
 
         if "gif" in self.type or "audio" in self.type or "video" in self.type:
             self.generate_play_pause_icons()
@@ -167,15 +165,13 @@ class PreviewContainer(Gtk.Grid):
             eventbox.connect("leave-notify-event", self.on_hover_leave)
 
             if "gif" in self.type:
-                eventbox.connect("button-press-event", self.on_button_pressed)
+                eventbox.connect("button-press-event", self.toggle_gif_animation)
             else:
-                eventbox.connect("button-press-event", self.previewer.play_pause)
+                eventbox.connect("button-press-event", self.open_file)
             
             self.attach(eventbox, 0, 0, 1, 1)
         else:
             self.attach(preview_box, 0, 0, 1, 1)
-
-
 
     def generate_play_pause_icons(self):
         play_image = Gtk.Image().new_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
@@ -186,7 +182,6 @@ class PreviewContainer(Gtk.Grid):
         play_icon.props.valign = Gtk.Align.CENTER
         play_icon.set_size_request(32, 32)
         play_icon.get_style_context().add_class("play-pause-shadow")
-        # play_icon.get_style_context().add_class("play-pause-shadow-overlay")
         self.play_revealer = Gtk.Revealer()
         self.play_revealer.props.transition_type = Gtk.RevealerTransitionType.CROSSFADE
         self.play_revealer.add(play_icon)
@@ -199,12 +194,15 @@ class PreviewContainer(Gtk.Grid):
         pause_icon.props.valign = Gtk.Align.CENTER
         pause_icon.set_size_request(32, 32)
         pause_icon.get_style_context().add_class("play-pause-shadow")
-        # pause_icon.get_style_context().add_class("play-pause-shadow-overlay")
         self.pause_revealer = Gtk.Revealer()
         self.pause_revealer.props.transition_type = Gtk.RevealerTransitionType.CROSSFADE
         self.pause_revealer.add(pause_icon)
 
-    def on_button_pressed(self, eventbox, eventbutton):
+    def open_file(self, eventbox, eventbutton):
+        if eventbutton.button == 1 and eventbutton.type.value_name == "GDK_BUTTON_PRESS":
+            self.callback(self.callback_data)
+
+    def toggle_gif_animation(self, eventbox, eventbutton):
         if eventbutton.button == 1 and eventbutton.type.value_name == "GDK_BUTTON_PRESS":
             if self.play_gif_thread is not None:
                 self.stop_threads = True
@@ -218,13 +216,15 @@ class PreviewContainer(Gtk.Grid):
 
     def on_hover_enter(self, *args):
         proceed = False
+        if "audio" in self.type or "video" in self.type:
+            proceed = True
         if "gif" in self.type and self.play_gif_thread is not None:
             proceed = True
-        if ("audio" in self.type or "video" in self.type) and self.previewer is not None:
-            if self.previewer.is_playing():
-                proceed = True
         if proceed:
-            self.pause_revealer.set_reveal_child(True)
+            if "audio" in self.type or "video" in self.type:
+                self.play_revealer.set_reveal_child(True)
+            else:
+                self.pause_revealer.set_reveal_child(True)
         else:
             self.play_revealer.set_reveal_child(True)
 
