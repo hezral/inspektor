@@ -28,32 +28,29 @@ class DropView(Gtk.Grid):
         drop_box = Gtk.EventBox()
         drop_box.add(drop_label)
 
-        # self.attach(drop_label, 0, 0, 1, 1)
         self.attach(drop_box, 0, 0, 1, 1)
 
-        self.drag_and_drop_setup(drop_box)
+        self.drag_and_drop_setup_drop_view(drop_box)
 
-    def drag_and_drop_setup(self, widget):
+    def drag_and_drop_setup_drop_view(self, widget):
         widget.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
         widget.drag_dest_add_uri_targets()
-        widget.connect("drag_drop", self.on_drag_drop)
         widget.connect("drag_data_received", self.on_drag_data_received)
+
+    def drag_and_drop_setup_main_window(self, widget):
+        widget.drag_dest_set(Gtk.DestDefaults.ALL, [], Gdk.DragAction.COPY)
+        widget.drag_dest_add_uri_targets()
         widget.connect("drag_motion", self.on_drag_motion)
-        widget.connect("drag_leave", self.on_drag_drop)
-
-
-    def on_drag_drop(self, *args):
-        ...
 
     def on_drag_motion(self, *args):
-        ...
-        
-    def on_drag_begin(self, widget, drag_context):
-        self.disconnect_by_func(self.on_drag_motion)
+        self.app.window.stack.set_visible_child_name("drop-view")
+        self.app.window.show_all()
 
     def on_drag_end(self, widget, drag_context):
-        self.connect("drag_motion", self.on_drag_motion)
-        self.grab_from_stash(widget, drag_context)
+        ...
+
+    def on_drag_begin(self, widget, drag_context):
+        ...
 
     def on_drag_data_get(self, widget, drag_context, data, info, timestamp):
         ...
@@ -72,6 +69,6 @@ class DropView(Gtk.Grid):
                     self.app.do_initialize_inspeck_obj(self.app.file)
                     self.app.window.do_show_window()
                     self.hide()
-                    # self.drag_and_drop_setup(self.app.window)
+                    self.drag_and_drop_setup_main_window(self.app.window.headerbar)
 
         Gtk.drag_finish(context, True, False, timestamp)
