@@ -89,7 +89,6 @@ class InspektorWindow(Handy.ApplicationWindow):
 
         self.headerbar.pack_start(self.app.inspeck_obj.icon)
         self.headerbar.pack_start(self.app.inspeck_obj.name_label)
-        # self.headerbar.pack_end(self.export_button)
         self.headerbar.props.title = ""
         self.stack.set_visible_child_name("base-view")
 
