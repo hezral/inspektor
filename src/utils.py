@@ -5,10 +5,11 @@ import os
 import stat
 import json
 import subprocess
+import cv2
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk, Gio
  
 class HelperUtils():
 
@@ -16,9 +17,51 @@ class HelperUtils():
         run_executable = subprocess.Popen(['exiftool', '-j', file], stdout=subprocess.PIPE)
         stdout, stderr = run_executable.communicate()
         jsondata = json.loads(stdout)[0]
-        for key in jsondata:
-            print(key, ":", jsondata[key])
+        # for key in jsondata:
+        #     print(key, ":", jsondata[key])
         return jsondata
+
+    def get_audio_art(self, infile=None, outfile=None):
+        audio_art = None
+        probe_cmd = 'exiftool -a -G4 "-picture*" {0}'.format(infile)
+        run_executable = subprocess.Popen(probe_cmd, shell=True, stdout=subprocess.PIPE)
+        stdout, stderr = run_executable.communicate()
+        i = 0
+        lines = stdout.decode("utf-8").replace(" ","").split("\n")
+        for line in lines:
+            if "FrontCover" in line:
+                image_type =lines[i-1].split(":")[-1].split("/")[-1]
+                if image_type == "jpeg":
+                    image_type = "jpg"
+                outfile = "{0}.{1}".format(outfile, image_type)
+
+                copynum = line.split(":")[0].split("]")[0].split("[")
+                
+                if copynum[-1] == "":
+                    export_cmd = 'exiftool -picture -b {0} > {1}'.format(infile, outfile)
+                else:
+                    export_cmd = 'exiftool -{0}:picture -b {1} > {2}'.format(copynum[-1], infile, outfile)
+                run_executable = subprocess.Popen(export_cmd, shell=True, stdout=subprocess.PIPE)
+                stdout, stderr = run_executable.communicate()
+                audio_art = outfile
+                break                
+            i += 1
+        return audio_art
+
+    def get_video_frame(self, infile=None, outfile=None):
+        video_frame = None
+        video_capture = cv2.VideoCapture(infile)
+        success, image = video_capture.read()
+        count = 0
+        frame = 30
+        outfile = "{0}.{1}".format(outfile, "png")
+        while count <= frame:
+            if count == frame:
+                cv2.imwrite(outfile, image)
+                video_frame = outfile
+            success, image = video_capture.read()
+            count += 1
+        return video_frame
 
     def get_permission(self, file):
         stmode = os.lstat(file).st_mode
@@ -87,3 +130,13 @@ class HelperUtils():
             return True
         except:
             return False
+
+    def open_file_with_default_app(self, path=None):
+        ''' Function to view file using default application via Gio'''
+        view_file = Gio.File.new_for_path(path)
+        if view_file.query_exists():
+            try:
+                Gio.AppInfo.launch_default_for_uri(uri=view_file.get_uri(), context=None)
+            except:
+                import traceback
+                print(traceback.format_exc())
