@@ -23,9 +23,6 @@ inspektor_sources = [
   'constants.py',
   'utils.py',
   'file_inspeck.py',
-  'waveform.py',
-  'playaudio.py',
-  'playvideo.py'
 ]
 
 install_data(inspektor_sources, install_dir: moduledir)
