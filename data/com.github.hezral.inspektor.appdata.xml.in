@@ -33,7 +33,7 @@
           <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-02.png?raw=true</image>
       </screenshot>
       <screenshot>
-          <caption>Preview images, videos and audio files</caption>
+          <caption>Preview images, video thumbnail and animated gifs</caption>
           <image>https://github.com/hezral/inspektor/blob/master/data/screenshot-03.png?raw=true</image>
       </screenshot>
       <screenshot>
@@ -77,13 +77,13 @@
   </content_rating>
 
   <releases>
-    <release version="1.0.5" date="2021-10-26">
+    <release version="2.0.1" date="2021-11-05">
       <description>
-        <p>*New* Run/Trigger shortcut keys will show/hide Inspektor depending if its visible or not</p>
-        <p>*New* Hover on Inspektor total to see tooltip of total clip types</p>
-        <p>*Improved* Html clip types causing performance and resource issues</p>
-        <p>*Fixed* Search-as-you-type behaviour</p>
-        <p>*Fixed* App source icon error if app is not installed</p>
+        <p>First release as flatpak</p>
+        <p>Re-designed UI and complete rewrite</p>
+        <p>Preview images, video, audio files</p>
+        <p>Click on info text and copy to clipboard automatically</p>
+        <p>Inspeck files with file manager's Open With menu</p>
       </description>
     </release>
   </releases>
@@ -91,7 +91,7 @@
   <custom>
     <value key="x-appcenter-color-primary">#7D30E8</value>
     <value key="x-appcenter-color-primary-text">#FFFFFF</value>
-    <value key="x-appcenter-suggested-price">10.00</value>
+    <value key="x-appcenter-suggested-price">2.00</value>
     <value key="x-appcenter-stripe">pk_live_51J03F1AXT8Az6AYFEiPc5mgpv7vUSWDnw135TmPT4tUbB2CJLwG19e3NxEuC7Zbz3VkXg7BygUQOTf7x6UDhSAn8005gq9ywZy</value>
   </custom>
 
