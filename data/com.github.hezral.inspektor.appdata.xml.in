@@ -5,10 +5,10 @@
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>Inspektor</name>
-  <summary>Metadata viewer</summary>
+  <summary>View file metadata information</summary>
   <developer_name>Adi Hezral</developer_name>
   <description>
-    <p>View and export your files metadata easily. This is a GUI for ExifTool and Setfattr/Getfattr. Credits goes to each owner of the tools.</p>
+    <p>View file metadata information</p>
     <ul>
         <li>Supported file metadata by ExifTool</li>
         <li>Supports adding file comments, provided the filesystem supports it</li>
@@ -64,7 +64,7 @@
     <value key="x-appcenter-color-primary">#7D30E8</value>
     <value key="x-appcenter-color-primary-text">#FFFFFF</value>
     <value key="x-appcenter-suggested-price">2.00</value>
-    <value key="x-appcenter-stripe">pk_live_51J03F1AXT8Az6AYFEiPc5mgpv7vUSWDnw135TmPT4tUbB2CJLwG19e3NxEuC7Zbz3VkXg7BygUQOTf7x6UDhSAn8005gq9ywZy</value>
+    <value key="x-appcenter-stripe">pk_live_51HUnWtAIOwvlC6vL2CzkJLIag2jOPmncxxnkjukyaHhdQrvgtVz11ji7g0eCofbf84QK7wksSEKCCmrIt0AMM8jZ00cVKp27Ih</value>
   </custom>
 
 </component>
