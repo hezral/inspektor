@@ -1,5 +1,5 @@
-com.github.hezral.inspektor (1.0.0) precise; urgency=low
+com.github.hezral.inspektor (2.0.3) precise; urgency=low
 
-  * Changed appdata description
+  * Fixed and improved appdata info
 
- -- Adi Hezral <hezral@gmail.com>  Sat, 30 Oct 2021 00:00:00 +0800
+ -- Adi Hezral <hezral@gmail.com>  Fri, 12 Nov 2021 00:00:00 +0800
