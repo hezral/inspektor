@@ -49,20 +49,16 @@
   <content_rating type="oars-1.1" />
 
   <releases>
-    <release version="2.0.1" date="2021-11-05">
+    <release version="2.0.3" date="2021-11-12">
       <description>
-        <p>First release as flatpak</p>
-        <p>Re-designed UI and complete rewrite</p>
-        <p>Preview images, video, audio files</p>
-        <p>Click on info text and copy to clipboard automatically</p>
-        <p>Inspeck files with file manager's Open With menu</p>
+        <p>Fixed and improved appdata info</p>
       </description>
     </release>
   </releases>
 
   <custom>
-    <value key="x-appcenter-color-primary">#7D30E8</value>
-    <value key="x-appcenter-color-primary-text">#FFFFFF</value>
+    <value key="x-appcenter-color-primary">#B7E1E5</value>
+    <value key="x-appcenter-color-primary-text">#29484F</value>
     <value key="x-appcenter-suggested-price">2.00</value>
     <value key="x-appcenter-stripe">pk_live_51HUnWtAIOwvlC6vL2CzkJLIag2jOPmncxxnkjukyaHhdQrvgtVz11ji7g0eCofbf84QK7wksSEKCCmrIt0AMM8jZ00cVKp27Ih</value>
   </custom>
