@@ -69,6 +69,5 @@ class DropView(Gtk.Grid):
                     self.app.do_initialize_inspeck_obj(self.app.file)
                     self.app.window.do_show_window()
                     self.hide()
-                    self.drag_and_drop_setup_main_window(self.app.window.headerbar)
 
         Gtk.drag_finish(context, True, False, timestamp)

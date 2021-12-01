@@ -59,6 +59,7 @@ class InspektorWindow(Handy.ApplicationWindow):
         self.add(self.layout)
         self.show_all()
         self.connect("delete-event", self.on_close_window)
+        self.drop_view.drag_and_drop_setup_main_window(self)
 
     def generate_headerbar(self):
         self.headerbar = Handy.HeaderBar()
