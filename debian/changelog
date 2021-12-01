@@ -1,5 +1,5 @@
-com.github.hezral.inspektor (2.0.3) precise; urgency=low
+com.github.hezral.inspektor (2.0.4) precise; urgency=low
 
-  * Fixed and improved appdata info
+  * Fixed issue with drag and drop
 
- -- Adi Hezral <hezral@gmail.com>  Fri, 12 Nov 2021 00:00:00 +0800
+ -- Adi Hezral <hezral@gmail.com>  Tue, 1 Dec 2021 00:00:00 +0800

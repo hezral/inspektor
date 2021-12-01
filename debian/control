@@ -17,4 +17,4 @@ Depends: ${python3:Depends},
          libimage-exiftool-perl,
          attr
 Description: Inspektor
- View additional metadata for files
+ View file metadata information

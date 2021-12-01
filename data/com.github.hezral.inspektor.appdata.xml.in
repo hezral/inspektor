@@ -49,9 +49,9 @@
   <content_rating type="oars-1.1" />
 
   <releases>
-    <release version="2.0.3" date="2021-11-12">
+    <release version="2.0.4" date="2021-12-1">
       <description>
-        <p>Fixed and improved appdata info</p>
+        <p>Fixed issue with dragn and drop</p>
       </description>
     </release>
   </releases>
